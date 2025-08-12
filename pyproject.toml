@@ -1,0 +1,22 @@
+[project]
+name = "rss"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+        "alembic>=1.16.2",
+        "argon2-cffi>=23.1.0",
+        "fastapi[standard]>=0.115.12",
+        "fitparse>=1.2.0",
+        "pyjwt>=2.10.1",
+        "python-multipart>=0.0.20",
+        "sqlalchemy>=2.0.40",
+        "sqlmodel>=0.0.24",
+        "python-dotenv>=1.0.1",
+        "pydantic-settings>=2.2.1",
+        "psycopg2-binary>=2.9.10",
+        "apscheduler>=3.11.0",
+        "rss-parser>=2.1.1",
+        "requests>=2.32.4",
+]
