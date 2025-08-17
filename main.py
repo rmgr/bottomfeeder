@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from config.db import (create_db_and_tables, get_db_connection)
 from config.settings import settings
 from repositories.FeedRepository import FeedRepository
@@ -8,11 +9,14 @@ from services.EntryService import EntryService
 from routers.AccountRouter import AccountRouter
 from routers.FeedRouter import FeedRouter
 from routers.EntryRouter import EntryRouter
+from routers.WebRouter import WebRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from services.RssService import RssService
 
 app = FastAPI()
 scheduler = BackgroundScheduler()
+
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def refresh():
@@ -51,3 +55,4 @@ app.add_middleware(
 app.include_router(AccountRouter)
 app.include_router(FeedRouter)
 app.include_router(EntryRouter)
+app.include_router(WebRouter)

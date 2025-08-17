@@ -2,12 +2,13 @@ from typing import Annotated
 from config.jwt import JwtConfig
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi import APIRouter, Depends, UploadFile, status, Response, HTTPException, Cookie, Request
+from fastapi.responses import RedirectResponse
 from models.Token import Token
 from services.AccountService import AccountService
 from datetime import timedelta
-from models.Account import AccountSummary
 from models.requests.RegisterRequest import RegisterRequest
 from pydantic import ValidationError
+from starlette.status import HTTP_303_SEE_OTHER
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
@@ -27,11 +28,12 @@ async def login(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=JwtConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=JwtConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = account_service.create_access_token(
         data={"sub": user.email_address}, expires_delta=access_token_expires
     )
-    
+
     # Set the cookie
     response.set_cookie(
         key="access_token",
@@ -41,8 +43,8 @@ async def login(
         samesite="lax",
         max_age=JwtConfig.ACCESS_TOKEN_EXPIRE_MINUTES * 60
     )
-    
-    return Token(access_token=access_token, token_type="bearer")
+
+    return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
 
 
 @AccountRouter.post("/logout", status_code=status.HTTP_200_OK)
@@ -63,7 +65,8 @@ async def get_token(
             detail="Incorrect username or password",
             headers={"WWW-Authenticate": "Bearer"},
         )
-    access_token_expires = timedelta(minutes=JwtConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token_expires = timedelta(
+        minutes=JwtConfig.ACCESS_TOKEN_EXPIRE_MINUTES)
     access_token = account_service.create_access_token(
         data={"sub": user.email_address}, expires_delta=access_token_expires
     )

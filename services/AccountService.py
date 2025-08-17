@@ -103,6 +103,25 @@ async def validate_token(token: str, account_service: AccountService = Depends()
     return AccountSummary(**user.dict())
 
 
+async def try_get_current_user(
+    token: Annotated[str | None, Depends(oauth2_scheme)] = None,
+    access_token: Annotated[str | None, Cookie()] = None,
+    account_service: AccountService = Depends()
+):
+    try:
+        # Try bearer token first
+        if token:
+            return await validate_token(token, account_service)
+        # Then try cookie
+        if access_token:
+            return await validate_token(access_token, account_service)
+
+    except Exception:
+        # TODO: Logging
+        pass
+    return None
+
+
 async def get_current_user(
     token: Annotated[str | None, Depends(oauth2_scheme)] = None,
     access_token: Annotated[str | None, Cookie()] = None,

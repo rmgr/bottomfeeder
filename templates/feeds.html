@@ -1,0 +1,26 @@
+<html>
+<head>
+    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+    <h1>List of Feeds</h1>
+
+    {% for item in feeds.items %}
+        <a href="/feed/{{item.id}}"><h1>{{ item.feed_name }}</h1></a>
+        <p>{{ item.feed_url }}</p>
+    {% endfor %}
+
+    <div class="pagination">
+        {% if page > 1 %}
+            <a href="/?page={{ page - 1 }}&page_size={{ page_size }}">Previous</a>
+        {% endif %}
+        
+        <span>Page {{ feeds.page }}</span>
+
+        {% if feeds.page < feeds.total_pages %}
+            <a href="/?page={{ page + 1 }}&page_size={{ page_size }}">Next</a>
+        {% endif %}
+    </div>
+</body>
+</html>
+

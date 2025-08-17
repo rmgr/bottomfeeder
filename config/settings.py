@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     # API settings
     API_V1_STR: str = "/api/v1"
-    PROJECT_NAME: str = "Garmin Tools API"
+    PROJECT_NAME: str = "RSS"
     # Security
     SECRET_KEY: str = "your-secure-secret-key-here"
     # Development settings

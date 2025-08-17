@@ -6,6 +6,7 @@ from repositories.FeedRepository import FeedRepository
 from services.EntryService import EntryService
 from datetime import datetime, timezone
 from email.utils import parsedate_to_datetime
+from readabilipy import simple_json_from_html_string
 import hashlib
 
 
@@ -73,11 +74,14 @@ class RssService:
         response = get(feed.feed_url)
         rss = RSSParser.parse(response.text)
         for item in rss.channel.items:
+            article = simple_json_from_html_string(
+                item.description.content, use_readability=True)
+            description = "\n".join(t["text"] for t in article["plain_text"])
             self.entry_service.create_entry(feed.id,
                                             get_entry_uid(item, feed.feed_url),
                                             item.title.content,
                                             item.links[0].content,
-                                            item.description.content,
+                                            description,
                                             parsedate_to_datetime(item.pub_date.content) if item.pub_date is not None else datetime.now(
                                                 timezone.utc),
                                             )
