@@ -33,9 +33,8 @@ async def login(
     access_token = account_service.create_access_token(
         data={"sub": user.email_address}, expires_delta=access_token_expires
     )
-
-    # Set the cookie
-    response.set_cookie(
+    redirect = RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
+    redirect.set_cookie(
         key="access_token",
         value=access_token,
         httponly=True,
@@ -43,8 +42,7 @@ async def login(
         samesite="lax",
         max_age=JwtConfig.ACCESS_TOKEN_EXPIRE_MINUTES * 60
     )
-
-    return RedirectResponse(url="/", status_code=HTTP_303_SEE_OTHER)
+    return redirect
 
 
 @AccountRouter.post("/logout", status_code=status.HTTP_200_OK)

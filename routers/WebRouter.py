@@ -1,12 +1,11 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Request, Query
-from fastapi.responses import HTMLResponse
+from fastapi import APIRouter, Depends, Request, Query, status, Form
+from fastapi.responses import HTMLResponse, RedirectResponse
 from services.FeedService import FeedService
 from services.EntryService import EntryService
-from services.AccountService import (try_get_current_user)
+from services.AccountService import (try_get_current_user, get_current_user)
 from models.Account import AccountSummary
 from models.Pagination import PaginationParams
-from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 import uuid
 WebRouter = APIRouter(tags=["web"])
@@ -23,6 +22,7 @@ async def feeds(
     page_size: int = Query(10, ge=1, le=100)
 ):
     if not current_user:
+        print("no user")
         return templates.TemplateResponse(
             request=request, name="login.html"
         )
@@ -39,6 +39,48 @@ async def feeds(
             "page_size": page_size
         }
     )
+
+
+@WebRouter.get("/add-feed")
+async def add_feed_page(
+    request: Request,
+    current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+):
+    if not current_user:
+        print("no user")
+        return templates.TemplateResponse(
+            request=request, name="login.html"
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="add_feed.html",
+        context={
+            "feed_name_error": "",
+            "feed_url_error": "",
+            "crawl_interval_error": "",
+            "age_window_error": ""
+        }
+    )
+
+
+@WebRouter.post("/add-feed", status_code=status.HTTP_201_CREATED)
+def create_feed(
+    current_user: Annotated[AccountSummary, Depends(get_current_user)],
+    feed_name: str = Form(...),
+    feed_url: str = Form(...),
+    crawl_interval: int | None = Form(None),
+    age_window: int | None = Form(None),
+    feed_service: FeedService = Depends(),
+):
+    feed_service.create_feed(
+        feed_name=feed_name,
+        feed_url=feed_url,
+        created_by=current_user.id,
+        crawl_interval=crawl_interval,
+        age_window=age_window,
+    )
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @WebRouter.get("/feed/{feed_id}", response_class=HTMLResponse)

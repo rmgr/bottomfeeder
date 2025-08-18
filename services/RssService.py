@@ -76,7 +76,10 @@ class RssService:
         for item in rss.channel.items:
             article = simple_json_from_html_string(
                 item.description.content, use_readability=True)
-            description = "\n".join(t["text"] for t in article["plain_text"])
+            description = ""
+            if article["plain_text"]:
+                description = "\n".join(t["text"]
+                                        for t in article["plain_text"])
             self.entry_service.create_entry(feed.id,
                                             get_entry_uid(item, feed.feed_url),
                                             item.title.content,
