@@ -1,9 +1,10 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Request, Query, status, Form
+from fastapi import APIRouter, Depends, Request, Query, status, Form, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
 from services.FeedService import FeedService
 from services.EntryService import EntryService
 from services.AccountService import (try_get_current_user, get_current_user)
+from services.RssService import RssService
 from models.Account import AccountSummary
 from models.Pagination import PaginationParams
 from fastapi.templating import Jinja2Templates
@@ -62,6 +63,42 @@ async def add_feed_page(
             "age_window_error": ""
         }
     )
+
+
+@WebRouter.get("/import-feeds")
+async def import_feeds_page(
+    request: Request,
+    current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+):
+    if not current_user:
+        return templates.TemplateResponse(
+            request=request, name="login.html"
+        )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="import_feeds.html",
+        context={
+            "feed_name_error": "",
+            "feed_url_error": "",
+            "crawl_interval_error": "",
+            "age_window_error": ""
+        }
+    )
+
+
+@WebRouter.post("/import-feeds")
+async def import_feeds(file: UploadFile,
+                       current_user: Annotated[AccountSummary, Depends(get_current_user)],
+                       rss_service: RssService = Depends()
+                       ):
+
+    raw_bytes = await file.read()
+
+    # Convert to string (assuming UTF-8 text file, e.g. OPML/XML)
+    text = raw_bytes.decode("utf-8")
+    rss_service.ImportOpml(text, current_user.id)
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @WebRouter.post("/add-feed", status_code=status.HTTP_201_CREATED)

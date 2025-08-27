@@ -1,12 +1,20 @@
-from rss_parser import RSSParser
-from requests import get
-from datetime import datetime
-from email.utils import parsedate_to_datetime
+from opyml import OPML
 
-response = get("https://eli.li/feed.rss")
-rss = RSSParser.parse(response.text)
-for item in rss.channel.items:
-    print(item.links[0].content)
-    print(item.title.content)
-    print(parsedate_to_datetime(item.pub_date.content).year)
-    print(item.description.content)
+
+def parse_outlines(input):
+    output = []
+    for outline in input.outlines:
+        output = output + parse_outlines(outline)
+        if outline.type == 'rss':
+            output.append(outline)
+    return output
+
+
+with open('feeds.opml', 'r') as f:
+    data = f.read()
+    doc = OPML.from_xml(data)
+    print(doc.body.outlines[0].outlines[0].type)
+    outlines = parse_outlines(doc.body)
+    for outline in outlines:
+        print(outline.title)
+    print(len(outlines))
