@@ -15,6 +15,19 @@ class EntryRepository:
         return feed
 
     # TODO: filter by user too
+    def list_entries(self,
+                     user_id: uuid.UUID,
+                     db: Session,
+                     page: int = 1,
+                     page_size: int = 10) -> Tuple[List[Entry], int]:
+        query = db.query(Entry)
+        total = query.count()
+        feeds = query.order_by(
+            desc(Entry.publish_date)
+        ).offset(
+            (page - 1) * page_size
+        ).limit(page_size).all()
+        return (feeds, total)
 
     def list_by_feed(self,
                      user_id: uuid.UUID,

@@ -12,6 +12,7 @@ from readabilipy import simple_json_from_html_string
 import hashlib
 from opyml import OPML
 import uuid
+from dateutil import parser
 
 
 def parse_opml_outlines(input):
@@ -122,7 +123,7 @@ class RssService:
             # Extract publication date
             pub_date = None
             if hasattr(entry, "published_parsed") and entry.published_parsed:
-                pub_date = parsedate_to_datetime(entry.published)
+                pub_date = parser.parse(entry.published)
             else:
                 pub_date = datetime.now(timezone.utc)
 

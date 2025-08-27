@@ -21,9 +21,29 @@ class EntryService:
         self.entry_repository = entry_repository
 
     def ListEntries(self,
-                    feed_id: uuid,
                     user_id: uuid,
                     pagination: PaginationParams) -> PaginatedResponse:
+        entries, total = self.entry_repository.list_entries(
+            user_id,
+            self.db,
+            page=pagination.page,
+            page_size=pagination.page_size
+        )
+
+        total_pages = math.ceil(total / pagination.page_size)
+
+        return PaginatedResponse(
+            items=entries,
+            total=total,
+            page=pagination.page,
+            page_size=pagination.page_size,
+            total_pages=total_pages
+        )
+
+    def ListEntriesForFeed(self,
+                           feed_id: uuid,
+                           user_id: uuid,
+                           pagination: PaginationParams) -> PaginatedResponse:
         entries, total = self.entry_repository.list_by_feed(
             user_id,
             feed_id,

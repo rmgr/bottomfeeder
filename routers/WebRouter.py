@@ -14,7 +14,7 @@ WebRouter = APIRouter(tags=["web"])
 templates = Jinja2Templates(directory="templates")
 
 
-@WebRouter.get("/")
+@WebRouter.get("/feeds")
 async def feeds(
     request: Request,
     current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
@@ -134,7 +134,7 @@ async def entries(
             request=request, name="login.html"
         )
 
-    entries = entry_service.ListEntries(
+    entries = entry_service.ListEntriesForFeed(
         feed_id,
         current_user.id,
         PaginationParams(page_size=page_size, page=page)
@@ -150,6 +150,31 @@ async def entries(
     )
 
 
+@WebRouter.get("/", response_class=HTMLResponse)
+async def entries(current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+                  request: Request,
+                  entry_service: EntryService = Depends(),
+                  page: int = Query(1, ge=1),
+                  page_size: int = Query(10, ge=1, le=100)
+                  ):
+
+    if not current_user:
+        return templates.TemplateResponse(
+            request=request, name="login.html"
+        )
+
+    entries = entry_service.ListEntries(
+        current_user.id,
+        PaginationParams(page_size=page_size, page=page)
+    )
+
+    return templates.TemplateResponse(
+        request=request,
+        name="entries.html",
+        context={
+            "entries": entries,
+        }
+    )
 """@WebRouter.get("/entries/{entry_id}", response_class=HTMLResponse)
 async def entries(
     entry_id: uuid.UUID,

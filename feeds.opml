@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<opml version="2.0">
+    <head>
+        <title>Miniflux</title>
+        <dateCreated>Tue, 26 Aug 2025 22:03:06 UTC</dateCreated>
+    </head>
+    <body>
+        <outline text="All">
+            <outline title="Derin Edala" text="Derin Edala" xmlUrl="https://derinstories.com/feed/" htmlUrl="https://derinstories.com" type="rss"></outline>
+            <outline title="Evennia Devblog RSS Feed" text="Evennia Devblog RSS Feed" xmlUrl="https://www.evennia.com/devblog/feed.rss" htmlUrl="https://www.evennia.com/devblog/feed.rss" type="rss"></outline>
+            <outline title="Fiction by Ben Brown" text="Fiction by Ben Brown" xmlUrl="https://benbrown.com/fiction/rss.xml" htmlUrl="https://benbrown.com" type="rss"></outline>
+            <outline title="Mike Monteiro’s Good News" text="Mike Monteiro’s Good News" xmlUrl="https://buttondown.com/monteiro/rss" htmlUrl="https://buttondown.com/monteiro" description="&lt;!-- buttondown-editor-mode: fancy --&gt;&lt;p&gt;&lt;/p&gt;&lt;p style=&#34;text-align: center&#34;&gt;&lt;em&gt;“I fell asleep while reading it.” —Jim Christensen&lt;/em&gt;&lt;/p&gt;&lt;hr&gt;&lt;p&gt;&lt;strong&gt;Hi.&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;My name is Mike and this is my newsletter.&lt;/p&gt;&lt;p&gt;Every week I answer one of your questions. The question can be about anything you want, but I&#39;ll only answer it if I think I can give a good answer.&lt;/p&gt;&lt;p&gt;To ask a question, just &lt;a target=&#34;_blank&#34; rel=&#34;noopener noreferrer nofollow&#34; href=&#34;https://www.mikemonteiro.com/ask-a-question&#34;&gt;fill out this simple form&lt;/a&gt;.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Why the hell should I subscribe to this?&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Well, you shouldn’t. You should go outside and plant a garden. You should start a band! You should go explore every part of the world you’ve ever wanted to see. You should learn Italian, French, or Tagalog. You should volunteer your time to an organization that works with disadvantaged youth. You should go teach an ESL class for immigrants at the local community college. You should spend your time tracking down abusive priests, like some sacred Avenger.&lt;/p&gt;&lt;p&gt;Those are the things you should do. And I encourage you to do them.&lt;/p&gt;&lt;p&gt;Feel free to subscribe to my newsletter because you want to. In addition to doing some of those things above.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;How often will this shit hit my inbox?&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Weekly.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Do you charge for the newsletter?&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;Nope. The newsletter is free. You can, however, &lt;a target=&#34;_blank&#34; rel=&#34;noopener noreferrer nofollow&#34; href=&#34;https://buttondown.com/monteiro/buy&#34;&gt;gimme $2 a month to show your appreciation&lt;/a&gt;, and because you want to support independent writing. But everyone sees the same thing. I don’t have special hidden stuff for paid subscribers.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Who did that drawing in your newsletter header, and is it supposed to be you?&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;My friend, the wonderful Kate Bingaman-Burt. And yes.&lt;/p&gt;&lt;p&gt;&lt;strong&gt;Is there any hope for the world?&lt;/strong&gt;&lt;/p&gt;&lt;p&gt;No, but there&#39;s a lot of work to do.&lt;/p&gt;" type="rss"></outline>
+            <outline title="nerdypepper&#39;s μblog" text="nerdypepper&#39;s μblog" xmlUrl="https://peppe.rs/index.xml" htmlUrl="https://peppe.rs" type="rss"></outline>
+            <outline title="Reynella East parkrun" text="Reynella East parkrun" xmlUrl="https://www.parkrun.com.au/reynellaeast/feed/" htmlUrl="https://www.parkrun.com.au/reynellaeast" type="rss"></outline>
+            <outline title="Writing an OS in Rust" text="Writing an OS in Rust" xmlUrl="https://os.phil-opp.com/rss.xml" htmlUrl="https://os.phil-opp.com" type="rss"></outline>
+        </outline>
+        <outline text="Environment News">
+            <outline title="Environment + Energy – The Conversation" text="Environment + Energy – The Conversation" xmlUrl="https://theconversation.com/au/environment/articles.atom" htmlUrl="https://theconversation.com" type="rss"></outline>
+            <outline title="WrathOfGnon’s Newsletter" text="WrathOfGnon’s Newsletter" xmlUrl="https://wrathofgnon.substack.com/feed" htmlUrl="https://wrathofgnon.substack.com" type="rss"></outline>
+        </outline>
+        <outline text="Game Dev">
+            <outline title="fabiensanglard.net" text="fabiensanglard.net" xmlUrl="https://fabiensanglard.net/rss.xml" htmlUrl="https://fabiensanglard.net" type="rss"></outline>
+            <outline title="How To Market A Game" text="How To Market A Game" xmlUrl="https://howtomarketagame.com/feed/" htmlUrl="https://howtomarketagame.com" type="rss"></outline>
+            <outline title="luxe engine" text="luxe engine" xmlUrl="https://luxeengine.com/rss/" htmlUrl="https://luxeengine.com/" type="rss"></outline>
+            <outline title="MAEK GAEM" text="MAEK GAEM" xmlUrl="https://www.dphrygian.com/wordpress/?feed=rss2" htmlUrl="https://www.dphrygian.com/wordpress" type="rss"></outline>
+            <outline title="Randy&#39;s Changelog" text="Randy&#39;s Changelog" xmlUrl="https://s3.amazonaws.com/revue/accounts/rss_feeds/000/431/785/original/rss_feed_431785.xml?1650192734" htmlUrl="https://www.getrevue.co/profile/randy" type="rss"></outline>
+            <outline title="roguelike development" text="roguelike development" xmlUrl="https://old.reddit.com/r/roguelikedev/.rss" htmlUrl="https://old.reddit.com/r/roguelikedev/" type="rss"></outline>
+            <outline title="Roguelikes!" text="Roguelikes!" xmlUrl="https://old.reddit.com/r/roguelikes/.rss" htmlUrl="https://old.reddit.com/r/roguelikes/" type="rss"></outline>
+            <outline title="Yeah, I Make Games" text="Yeah, I Make Games" xmlUrl="https://anchor.fm/s/4c5052d4/podcast/rss" htmlUrl="https://anchor.fm/yeah-i-make-games" type="rss"></outline>
+        </outline>
+        <outline text="Gardening">
+            <outline title="gala studio" text="gala studio" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCOvSKvTn6dlJEW0iVmB262w" htmlUrl="https://www.youtube.com/channel/UCOvSKvTn6dlJEW0iVmB262w" type="rss"></outline>
+            <outline title="Good Life Permaculture" text="Good Life Permaculture" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCXlEtfFIy5wY3tLN44kfooQ" htmlUrl="https://www.youtube.com/channel/UCXlEtfFIy5wY3tLN44kfooQ" type="rss"></outline>
+        </outline>
+        <outline text="General">
+            <outline title="atlasobscura" text="atlasobscura" xmlUrl="https://kill-the-newsletter.com/feeds/lxkgokybfujgihflswkp.xml" htmlUrl="https://www.kill-the-newsletter.com/" type="rss"></outline>
+            <outline title="journal.stuffwithstuff.com" text="journal.stuffwithstuff.com" xmlUrl="https://journal.stuffwithstuff.com/rss.xml" htmlUrl="http://journal.stuffwithstuff.com/" type="rss"></outline>
+            <outline title="Oatmeal" text="Oatmeal" xmlUrl="https://eli.li/feed.rss" htmlUrl="https://eli.li" type="rss"></outline>
+            <outline title="struthless" text="struthless" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCvcEBQ0K3UsQ8bzWKHKQmbw" htmlUrl="https://www.youtube.com/channel/UCvcEBQ0K3UsQ8bzWKHKQmbw" type="rss"></outline>
+            <outline title="Study Hacks - Decoding Patterns of Success - Cal Newport" text="Study Hacks - Decoding Patterns of Success - Cal Newport" xmlUrl="https://calnewport.com/blog/feed/" htmlUrl="https://calnewport.com/blog/" type="rss"></outline>
+            <outline title="The Comedy Button: Patreon Feed" text="The Comedy Button: Patreon Feed" xmlUrl="https://www.patreon.com/rss/comedybutton?auth=ec610bb12d4ed3dc9ceb1f0dc7252874" htmlUrl="https://www.patreon.com/comedybutton" type="rss"></outline>
+            <outline title="~ajroach42.com" text="~ajroach42.com" xmlUrl="https://ajroach42.com/feed.xml" htmlUrl="http://ajroach42.com/" type="rss"></outline>
+        </outline>
+        <outline text="Media">
+            <outline title="2 Clowns In A Closet" text="2 Clowns In A Closet" xmlUrl="https://circusfreaks.org/podcast/feed.xml" htmlUrl="https://circusfreaks.org/podcast/feed.xml" type="rss"></outline>
+            <outline title="Adventure Entertainment" text="Adventure Entertainment" xmlUrl="https://kill-the-newsletter.com/feeds/rhi3ihyokjnbsgrnzghu.xml" htmlUrl="https://www.kill-the-newsletter.com/" type="rss"></outline>
+            <outline title="nine inch nails" text="nine inch nails" xmlUrl="https://www.nin.com/feed/" htmlUrl="https://www.nin.com" type="rss"></outline>
+            <outline title="Tilde Whirl Tildeverse Podcast" text="Tilde Whirl Tildeverse Podcast" xmlUrl="http://tilde.town/~dozens/podcast/rss.xml" htmlUrl="https://tilde.town/~dozens/podcast/index.html" type="rss"></outline>
+        </outline>
+        <outline text="Modding">
+            <outline title="OpenMW" text="OpenMW" xmlUrl="http://feeds.feedburner.com/openmw" htmlUrl="https://openmw.org" type="rss"></outline>
+            <outline title="Skywind" text="Skywind" xmlUrl="https://mastodon.online/@skywind.rss" htmlUrl="https://mastodon.online/@skywind" type="rss"></outline>
+        </outline>
+        <outline text="Podcast">
+            <outline title="Roguelike Radio" text="Roguelike Radio" xmlUrl="http://www.roguelikeradio.com/feeds/posts/default?alt=rss" htmlUrl="http://www.roguelikeradio.com/" type="rss"></outline>
+            <outline title="The Comedy Button" text="The Comedy Button" xmlUrl="https://comedybutton.libsyn.com/rss" htmlUrl="http://www.comedybutton.com/" type="rss"></outline>
+        </outline>
+        <outline text="Tabletop Games">
+            <outline title="Ars Cardboard – Ars Technica" text="Ars Cardboard – Ars Technica" xmlUrl="http://feeds.arstechnica.com/arstechnica/cardboard" htmlUrl="https://arstechnica.com" type="rss"></outline>
+            <outline title="Coins and Scrolls" text="Coins and Scrolls" xmlUrl="https://coinsandscrolls.blogspot.com/feeds/posts/default?alt=rss" htmlUrl="https://coinsandscrolls.blogspot.com/" type="rss"></outline>
+            <outline title="False Machine" text="False Machine" xmlUrl="https://falsemachine.blogspot.com/feeds/posts/default?alt=rss" htmlUrl="https://falsemachine.blogspot.com/" type="rss"></outline>
+            <outline title="Kontent Punch" text="Kontent Punch" xmlUrl="https://feeds.feedburner.com/kontentpunch/6IY6tJlKk3m" htmlUrl="https://www.kontentpunch.com/" type="rss"></outline>
+            <outline title="The Glatisant: A Questing Beast Newsletter" text="The Glatisant: A Questing Beast Newsletter" xmlUrl="https://questingbeast.substack.com/feed" htmlUrl="https://questingbeast.substack.com" type="rss"></outline>
+            <outline title="The Rogue&#39;s Wallet" text="The Rogue&#39;s Wallet" xmlUrl="https://bellenmred.blogspot.com/feeds/posts/default?alt=rss" htmlUrl="https://bellenmred.blogspot.com/" type="rss"></outline>
+        </outline>
+        <outline text="Tech">
+            <outline title="Ben Eater" text="Ben Eater" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCS0N5baNlQWJCUrhCEo8WlA" htmlUrl="https://www.youtube.com/channel/UCS0N5baNlQWJCUrhCEo8WlA" type="rss"></outline>
+            <outline title="Biz &amp; IT – Ars Technica" text="Biz &amp; IT – Ars Technica" xmlUrl="http://feeds.arstechnica.com/arstechnica/technology-lab" htmlUrl="https://arstechnica.com" type="rss"></outline>
+            <outline title="Blog – Hackaday" text="Blog – Hackaday" xmlUrl="https://hackaday.com/blog/feed/" htmlUrl="https://hackaday.com" type="rss"></outline>
+            <outline title="Drew DeVault&#39;s blog" text="Drew DeVault&#39;s blog" xmlUrl="https://drewdevault.com/blog/index.xml" htmlUrl="https://drewdevault.com" type="rss"></outline>
+            <outline title="Features – Ars Technica" text="Features – Ars Technica" xmlUrl="https://arstechnica.com:443/features/feed/?t=2e2fd49fdb551893f30129146bfc164a" htmlUrl="https://arstechnica.com" type="rss"></outline>
+            <outline title="Framework Blog" text="Framework Blog" xmlUrl="https://frame.work/au/en/blog.rss" htmlUrl="https://frame.work/" type="rss"></outline>
+            <outline title="Hidden Grove" text="Hidden Grove" xmlUrl="https://www.rfleury.com/feed" htmlUrl="https://www.rfleury.com" type="rss"></outline>
+            <outline title="jdh" text="jdh" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUzQJ3JBuQ9w-po4TXRJHiA" htmlUrl="https://www.youtube.com/channel/UCUzQJ3JBuQ9w-po4TXRJHiA" type="rss"></outline>
+            <outline title="mango.pdf.zone" text="mango.pdf.zone" xmlUrl="https://mango.pdf.zone/feed" htmlUrl="/" type="rss"></outline>
+            <outline title="Mark Videon Writes" text="Mark Videon Writes" xmlUrl="https://blog.markvideon.dev/rss/" htmlUrl="https://blog.markvideon.dev/" type="rss"></outline>
+            <outline title="Mike Stone" text="Mike Stone" xmlUrl="https://mikestone.me/feed.xml" htmlUrl="https://mikestone.me/" type="rss"></outline>
+            <outline title="N O D E" text="N O D E" xmlUrl="https://n-o-d-e.net/rss/rss.xml" htmlUrl="https://N-O-D-E.net" type="rss"></outline>
+            <outline title="Open Source – Ars Technica" text="Open Source – Ars Technica" xmlUrl="https://arstechnica.com:443/discipline/open-source-2/feed/?t=2e2fd49fdb551893f30129146bfc164a" htmlUrl="https://arstechnica.com" type="rss"></outline>
+            <outline title="Ploum.net" text="Ploum.net" xmlUrl="https://ploum.net/atom_en.xml" htmlUrl="https://ploum.net/" type="rss"></outline>
+            <outline title="Posts on Secluded.Site" text="Posts on Secluded.Site" xmlUrl="https://secluded.site/posts/index.xml" htmlUrl="/posts/" type="rss"></outline>
+            <outline title="Robert Heaton | Blog" text="Robert Heaton | Blog" xmlUrl="https://robertheaton.com/feed.xml" htmlUrl="https://robertheaton.com" type="rss"></outline>
+            <outline title="Science + Technology – The Conversation" text="Science + Technology – The Conversation" xmlUrl="https://theconversation.com/au/technology/articles.atom" htmlUrl="https://theconversation.com" type="rss"></outline>
+            <outline title="secret club" text="secret club" xmlUrl="https://secret.club/feed" htmlUrl="https://secret.club/" type="rss"></outline>
+            <outline title="Steven Bennett" text="Steven Bennett" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCvnxvXWYcOlmhRFvZ_ISP8g" htmlUrl="https://www.youtube.com/channel/UCvnxvXWYcOlmhRFvZ_ISP8g" type="rss"></outline>
+            <outline title="www.marginalia.nu on marginalia.nu" text="www.marginalia.nu on marginalia.nu" xmlUrl="https://www.marginalia.nu/index.xml" htmlUrl="https://www.marginalia.nu/" type="rss"></outline>
+        </outline>
+        <outline text="Travel">
+            <outline title="Blog - Crime Pays But Botany Doesn&#39;t" text="Blog - Crime Pays But Botany Doesn&#39;t" xmlUrl="https://www.crimepaysbutbotanydoesnt.com/blog?format=rss" htmlUrl="https://www.crimepaysbutbotanydoesnt.com/blog/" type="rss"></outline>
+        </outline>
+        <outline text="Video">
+            <outline title="Grouse House" text="Grouse House" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCNuaFLcbAeycQAIAW5s7T0Q" htmlUrl="https://www.youtube.com/channel/UCNuaFLcbAeycQAIAW5s7T0Q" type="rss"></outline>
+            <outline title="tanks for nothin" text="tanks for nothin" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCJXxuESjGIaaqb1-IRWFihw" htmlUrl="https://www.youtube.com/channel/UCJXxuESjGIaaqb1-IRWFihw" type="rss"></outline>
+        </outline>
+        <outline text="Video Games">
+            <outline title="Arma Reforger" text="Arma Reforger" xmlUrl="https://store.steampowered.com/feeds/news/app/1874880" htmlUrl="https://store.steampowered.com/news/app/1874880/" type="rss"></outline>
+            <outline title="Ascii Dreams" text="Ascii Dreams" xmlUrl="http://feeds.feedburner.com/AsciiDreams" htmlUrl="http://roguelikedeveloper.blogspot.com/" type="rss"></outline>
+            <outline title="DreadXP" text="DreadXP" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCUBh3CaLZ0MlbYP01-CA3yw" htmlUrl="https://www.youtube.com/channel/UCUBh3CaLZ0MlbYP01-CA3yw" type="rss"></outline>
+            <outline title="Dwarf Fortress Development Log" text="Dwarf Fortress Development Log" xmlUrl="https://www.bay12games.com/dwarves/dev_now.rss" htmlUrl="http://www.bay12games.com/dwarves/index.html" type="rss"></outline>
+            <outline title="Factorio Blog" text="Factorio Blog" xmlUrl="https://factorio.com/blog/rss" htmlUrl="https://factorio.com/" type="rss"></outline>
+            <outline title="Gaming &amp; Culture – Ars Technica" text="Gaming &amp; Culture – Ars Technica" xmlUrl="https://arstechnica.com:443/gaming/feed/?t=2e2fd49fdb551893f30129146bfc164a" htmlUrl="https://arstechnica.com" type="rss"></outline>
+            <outline title="GROUND BRANCH" text="GROUND BRANCH" xmlUrl="https://www.groundbranch.com/feed/" htmlUrl="https://www.groundbranch.com" type="rss"></outline>
+            <outline title="OnceLost Games" text="OnceLost Games" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCPCtwmmm0YqSPZ2lDQG7xBA" htmlUrl="https://www.youtube.com/channel/UCPCtwmmm0YqSPZ2lDQG7xBA" type="rss"></outline>
+            <outline title="Ready or Not RSS Feed" text="Ready or Not RSS Feed" xmlUrl="https://steamcommunity.com/games/1144200/rss" htmlUrl="https://steamcommunity.com/games/1144200" type="rss"></outline>
+            <outline title="Spellcast Studios" text="Spellcast Studios" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCB2GQh7i37KRxahNm5VgCkw" htmlUrl="https://www.youtube.com/channel/UCB2GQh7i37KRxahNm5VgCkw" type="rss"></outline>
+            <outline title="thatFain" text="thatFain" xmlUrl="https://www.youtube.com/feeds/videos.xml?channel_id=UCo0qN7XQVqXltP5yb2LNe2A" htmlUrl="https://www.youtube.com/channel/UCo0qN7XQVqXltP5yb2LNe2A" type="rss"></outline>
+            <outline title="The Bottom Feeder" text="The Bottom Feeder" xmlUrl="https://bottomfeeder.substack.com/feed" htmlUrl="https://bottomfeeder.substack.com" type="rss"></outline>
+            <outline title="The Changelog" text="The Changelog" xmlUrl="https://alpinegames.substack.com/feed" htmlUrl="https://alpinegames.substack.com" type="rss"></outline>
+            <outline title="The Changelog" text="The Changelog" xmlUrl="https://alpinegames.substack.com/feed" htmlUrl="https://alpinegames.substack.com" type="rss"></outline>
+            <outline title="Thomas Biskup (ADOM) Blog" text="Thomas Biskup (ADOM) Blog" xmlUrl="https://www.roguelike.games/feed/" htmlUrl="https://www.roguelike.games" type="rss"></outline>
+            <outline title="Veloren" text="Veloren" xmlUrl="https://veloren.net/rss.xml" htmlUrl="https://veloren.net" type="rss"></outline>
+        </outline>
+        <outline text="Web Comics">
+            <outline title="Oglaf! -- Comics. Often dirty." text="Oglaf! -- Comics. Often dirty." xmlUrl="https://www.oglaf.com/feeds/rss/" htmlUrl="https://www.oglaf.com/latest/" type="rss"></outline>
+            <outline title="Three Word Phrase" text="Three Word Phrase" xmlUrl="http://www.threewordphrase.com/rss.xml" htmlUrl="http://www.threewordphrase.com/" type="rss"></outline>
+            <outline title="xkcd.com" text="xkcd.com" xmlUrl="https://xkcd.com/rss.xml" htmlUrl="https://xkcd.com/" type="rss"></outline>
+        </outline>
+    </body>
+</opml>
