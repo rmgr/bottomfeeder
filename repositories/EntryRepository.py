@@ -25,7 +25,7 @@ class EntryRepository:
         if only_unread:
             query = query.where(Entry.is_read == False)
         feeds = query.order_by(
-            desc(Entry.id)
+            desc(Entry.publish_date)
         ).offset(
             (page - 1) * page_size
         ).limit(page_size).all()
