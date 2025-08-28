@@ -5,6 +5,7 @@
     {% for entry in entries.items %}
         <article>
             <h2><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h2>
+            <p>{{ entry.publish_date }}</p>
             <p>{{ entry.summary }}</p>
         </article>
     {% endfor %}
