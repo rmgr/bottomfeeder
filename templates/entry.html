@@ -1,11 +1,49 @@
 {% extends "layout.html" %}
 {% block content %}
+  <style>
+    #mark-read {
+    display:none;
+  }
+  </style>
 <h1>{{ entry.title }}</h1>
-<div><a id="mark-unread" href="#">Mark Unread</a></div>
+<div>
+  <a id="mark-unread" href="#">Mark Unread</a>
+  <a id="mark-read" href="#">Mark Read</a>
+</div>
 {{ entry.description }}
 <script>
+function show_mark_unread() {
+
+  document.querySelector("#mark-unread").style.display = "block";
+  document.querySelector("#mark-read").style.display = "none";
+}
+function show_mark_read() {
+
+  document.querySelector("#mark-read").style.display = "block";
+  document.querySelector("#mark-unread").style.display = "none";
+}
+
+document.querySelector("#mark-read").addEventListener("click", (event) => {
+  fetch(
+    new Request("/v1/entries/{{entry.id}}/read")
+  ).then(
+      (response) =>
+        {
+          show_mark_unread();
+        }
+    );
+  });
+
 document.querySelector("#mark-unread").addEventListener("click", (event) => {
-  fetch(new Request("/v1/entries/{{entry.id}}/unread"));});
+  fetch(
+    new Request("/v1/entries/{{entry.id}}/unread")
+  ).then(
+      (response) =>
+        {
+          show_mark_read();
+        }
+    );
+  });
 </script>
 {% endblock %}
 

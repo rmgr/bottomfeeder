@@ -40,3 +40,13 @@ async def unread_entry(
 ):
 
     entry_service.mark_unread(entry_id)
+
+
+@EntryRouter.get("/{entry_id}/read", status_code=status.HTTP_200_OK)
+async def unread_entry(
+    entry_id: str,
+    current_user: Annotated[AccountSummary | None, Depends(get_current_user)],
+    entry_service: EntryService = Depends(),
+):
+
+    entry_service.mark_read(entry_id)
