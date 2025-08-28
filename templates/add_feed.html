@@ -1,8 +1,5 @@
-<html>
-<head>
-    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
     <h1>Add a Feed</h1>
 
     <form action="/add-feed" method="post">
@@ -12,7 +9,4 @@
       <label>Age Window: <input type="text" name="age_window" value="60"></label><br>
       <button type="submit">Login</button>
     </form>
-</body>
-</html>
-
-
+{% endblock %}

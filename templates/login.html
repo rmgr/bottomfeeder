@@ -1,10 +1,9 @@
-<html>
-  <body>
-    <form action="/v1/account/login" method="post">
+{% extends "layout.html" %}
+{% block content %}
+<form action="/v1/account/login" method="post">
       <label>Username: <input type="text" name="username"></label><br>
       <label>Password: <input type="password" name="password"></label><br>
       <button type="submit">Login</button>
     </form>
-  </body>
-</html>
+{% endblock %}
 

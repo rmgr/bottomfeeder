@@ -1,13 +1,10 @@
-<html>
-<head>
-    <link href="{{ url_for('static', path='/styles.css') }}" rel="stylesheet">
-</head>
-<body>
+{% extends "layout.html" %}
+{% block content %}
     <h1>Entries</h1>
 
     {% for entry in entries.items %}
         <article>
-            <h2><a href="{{ entry.link }}">{{ entry.title }}</a></h2>
+            <h2><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h2>
             <p>{{ entry.summary }}</p>
         </article>
     {% endfor %}
@@ -23,6 +20,4 @@
             <a href="/feed/{{ feed_id }}?page={{ entries.page + 1 }}&page_size={{ entries.page_size }}">Next</a>
         {% endif %}
     </div>
-</body>
-</html>
-
+{% endblock %}

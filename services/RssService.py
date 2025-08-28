@@ -128,7 +128,7 @@ class RssService:
                 pub_date = datetime.now(timezone.utc)
 
             # Use entry.id if present, else fallback to link
-            entry_uid = entry.get("id") or entry.get("link")
+            entry_uid = get_entry_uid(entry, entry.get("link"))
 
             self.entry_service.create_entry(
                 feed.id,

@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>{{ entry.title }}</h1>
+<div><a id="mark-unread" href="#">Mark Unread</a></div>
+{{ entry.description }}
+<script>
+document.querySelector("#mark-unread").addEventListener("click", (event) => {
+  fetch(new Request("/v1/entries/{{entry.id}}/unread"));});
+</script>
+{% endblock %}
+

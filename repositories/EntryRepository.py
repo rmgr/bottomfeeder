@@ -7,23 +7,25 @@ import uuid
 
 class EntryRepository:
     def get(self,
-            id: uuid.UUID,
-            user_id: uuid.UUID,
+            entry_id: uuid.UUID,
             db: Session) -> Optional[Entry]:
         query = db.query(Entry)
-        feed = query.where(Entry.id == id).first()
-        return feed
+        entry = query.where(Entry.id == entry_id).first()
+        return entry
 
     # TODO: filter by user too
     def list_entries(self,
                      user_id: uuid.UUID,
+                     only_unread: bool,
                      db: Session,
                      page: int = 1,
                      page_size: int = 10) -> Tuple[List[Entry], int]:
         query = db.query(Entry)
         total = query.count()
+        if only_unread:
+            query = query.where(Entry.is_read == False)
         feeds = query.order_by(
-            desc(Entry.publish_date)
+            desc(Entry.id)
         ).offset(
             (page - 1) * page_size
         ).limit(page_size).all()
@@ -47,6 +49,11 @@ class EntryRepository:
             (page - 1) * page_size
         ).limit(page_size).all()
         return (feeds, total)
+
+    def update(self, entry: Entry, db: Session):
+        db.add(entry)
+        db.flush()
+        db.refresh(entry)
 
     def create(self, feed_create: EntryCreate, db: Session) -> uuid.UUID:
         feed_data = Entry(

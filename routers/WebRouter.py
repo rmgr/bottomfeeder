@@ -163,7 +163,7 @@ async def entries(current_user: Annotated[AccountSummary | None, Depends(try_get
             request=request, name="login.html"
         )
 
-    entries = entry_service.ListEntries(
+    entries = entry_service.ListUnreadEntries(
         current_user.id,
         PaginationParams(page_size=page_size, page=page)
     )
@@ -175,9 +175,11 @@ async def entries(current_user: Annotated[AccountSummary | None, Depends(try_get
             "entries": entries,
         }
     )
-"""@WebRouter.get("/entries/{entry_id}", response_class=HTMLResponse)
-async def entries(
-    entry_id: uuid.UUID,
+
+
+@WebRouter.get("/entry/{entry_id}", response_class=HTMLResponse)
+async def entry(
+    entry_id: str,
     request: Request,
     current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
     entry_service: EntryService = Depends(),
@@ -187,18 +189,41 @@ async def entries(
             request=request, name="login.html"
         )
 
-    entries = entry_service.ListEntries(
-        feed_id,
-        current_user.id,
-        PaginationParams(page_size=page_size, page=page)
+    entry = entry_service.get_entry(
+        entry_id,
     )
+    entry_service.mark_read(entry_id)
 
     return templates.TemplateResponse(
         request=request,
-        name="entries.html",
+        name="entry.html",
         context={
-            "feed_id": feed_id,
-            "entries": entries,
+            "entry": entry,
         }
     )
-    """
+
+
+@WebRouter.get("/entry/{entry_id}/unread", response_class=HTMLResponse)
+async def unread_entry(
+    entry_id: str,
+    request: Request,
+    current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+    entry_service: EntryService = Depends(),
+):
+    if not current_user:
+        return templates.TemplateResponse(
+            request=request, name="login.html"
+        )
+
+    entry = entry_service.get_entry(
+        entry_id,
+    )
+    entry_service.mark_unread(entry_id)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="entry.html",
+        context={
+            "entry": entry,
+        }
+    )
