@@ -33,14 +33,15 @@ class FeedRepository:
     def list(self,
              db: Session,
              page: int = 1,
-             page_size: int = 10) -> List[Feed]:
+             page_size: int = 10) -> Tuple[List[Feed], int]:
         query = db.query(Feed)
+        total = query.count()
         feeds = query.order_by(
             desc(Feed.feed_name)
         ).offset(
             (page - 1) * page_size
         ).limit(page_size).all()
-        return feeds
+        return (feeds, total)
 
     def create(self, feed_create: FeedCreate, db: Session) -> uuid.UUID:
         feed_data = Feed(

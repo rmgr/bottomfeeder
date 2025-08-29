@@ -87,11 +87,15 @@ class RssService:
             self.feed_repository.create(feed_create, self.db)
         self.db.commit()
 
-    def RefreshFeeds(self):
-        # TODO: Loop through feed pages
-        feeds = self.feed_repository.list(self.db, 1, 100)
+    def RefreshFeeds(self, page_number: int = 1):
+        page_size = 10
+        feeds, total = self.feed_repository.list(
+            self.db, page_number, page_size)
         for feed in feeds:
             self.RefreshFeed(feed)
+
+        if total/page_size > page_number:
+            self.RefreshFeeds(page_number + 1)
 
     def RefreshFeed(self, feed):
         try:
