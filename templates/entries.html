@@ -6,6 +6,7 @@
         <article>
             <h2><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h2>
             <p>{{ entry.publish_date }}</p>
+            <p><a href="/feed/{{entry.feed.id}}">{{ entry.feed.feed_name }}</a></p>
             <p>{{ entry.summary }}</p>
         </article>
     {% endfor %}
