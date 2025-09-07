@@ -1,6 +1,7 @@
+from typing import Optional
 from config.db import (get_db_connection)
 from models.Pagination import PaginationParams, PaginatedResponse
-from models.Feed import FeedCreate
+from models.Feed import Feed, FeedCreate, FeedUpdate
 from fastapi import Depends
 from repositories.FeedRepository import FeedRepository
 from sqlalchemy.orm import Session
@@ -38,6 +39,35 @@ class FeedService:
             total_pages=total_pages
         )
 
+    def get(self,
+            feed_id: uuid,
+            user_id: uuid) -> Optional[Feed]:
+
+        feed = self.feed_repository.get(
+            id=feed_id,
+            user_id=user_id,
+            db=self.db,
+        )
+
+        return feed
+
+    def update_feed(self,
+                    feed_id: uuid.UUID,
+                    feed_name: str,
+                    feed_url: str,
+                    created_by: uuid.UUID,
+                    crawl_interval: int,
+                    age_window: int) -> uuid.UUID:
+        feed_update = FeedUpdate(id=feed_id,
+                                 feed_name=feed_name,
+                                 feed_url=feed_url,
+                                 created_by=created_by,
+                                 crawl_interval=crawl_interval,
+                                 age_window=age_window)
+        id = self.feed_repository.update(feed_update, self.db)
+        self.db.commit()
+        return id
+    
     def create_feed(self,
                     feed_name: str,
                     feed_url: str,

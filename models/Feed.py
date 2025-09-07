@@ -40,3 +40,11 @@ class FeedCreate(SQLModel):
     created_by: uuid.UUID
     crawl_interval: int = 15
     age_window: int = 15
+
+class FeedUpdate(SQLModel):
+    id: uuid.UUID 
+    feed_name: str
+    feed_url: str
+    created_by: uuid.UUID
+    crawl_interval: int = 15
+    age_window: int = 15
