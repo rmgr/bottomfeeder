@@ -14,6 +14,23 @@ class EntryRepository:
         entry = query.where(Entry.id == entry_id).first()
         return entry
 
+    def list_all_entries(self,
+                     only_unread: bool,
+                     db: Session,
+                     page: int = 1,
+                     page_size: int = 10) -> Tuple[List[Entry], int]:
+        query = db.query(Entry)
+        total = query.count()
+        if only_unread:
+            query = query.where(Entry.is_read == False)
+        entries = query.order_by(
+            desc(Entry.publish_date)
+        ).offset(
+            (page - 1) * page_size
+        ).limit(page_size).all()
+        return (entries, total)
+
+
     # TODO: filter by user too
     def list_entries(self,
                      user_id: uuid.UUID,

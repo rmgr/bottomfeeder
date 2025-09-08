@@ -5,8 +5,9 @@ import requests
 from sqlalchemy.orm import Session
 from models.Feed import Feed, FeedCreate
 from repositories.FeedRepository import FeedRepository
+from repositories.EntryRepository import EntryRepository
 from services.EntryService import EntryService
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta 
 from email.utils import parsedate_to_datetime
 from readabilipy import simple_json_from_html_string
 import hashlib
@@ -67,14 +68,17 @@ def get_entry_uid(entry, feed_url: str) -> str:
 class RssService:
     db: Session
     feed_repository: FeedRepository
+    entry_repository: EntryRepository
     entry_service: EntryService
 
     def __init__(self,
                  db: Session = Depends(get_db_connection),
                  feed_repository: FeedRepository = Depends(),
+                 entry_repository: EntryRepository = Depends(),
                  entry_service: EntryService = Depends()):
         self.db = db
         self.feed_repository = feed_repository
+        self.entry_repository = entry_repository
         self.entry_service = entry_service
 
     def ImportOpml(self, opml: str, created_by: uuid.UUID):
@@ -96,6 +100,31 @@ class RssService:
 
         if total/page_size > page_number:
             self.RefreshFeeds(page_number + 1)
+
+    def process_age_windows(self):
+        page = 1
+        page_size = 100
+
+        while True:
+            entries, total_count = self.entry_repository.list_all_entries(
+                True, self.db, page, page_size
+            )
+            if not entries:  # no more entries
+                break
+
+            for entry in entries:
+                self.process_age_window(entry)
+
+            page += 1  
+            self.db.commit()
+
+
+    def process_age_window(self, entry):
+        age_cutoff = entry.publish_date + timedelta(hours=entry.feed.age_window) 
+        if age_cutoff > datetime.now():
+            entry.is_read = True
+            self.entry_repository.update(entry, self.db)
+            print(f"cutting off {entry.title}") 
 
     def RefreshFeed(self, feed):
         try:

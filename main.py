@@ -19,6 +19,25 @@ scheduler = BackgroundScheduler()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
+def stale():
+    db_gen = get_db_connection()   # this is a generator
+    db = next(db_gen)              # get the actual Session object
+    try:
+        feed_repository = FeedRepository()
+        entry_repository = EntryRepository()
+        entry_service = EntryService(db, entry_repository)
+        rss_service = RssService(db, feed_repository, entry_repository, entry_service)
+        rss_service.process_age_windows()
+    finally:
+        try:
+            db.close()
+            db_gen.close()  # properly close generator (calls db.close())
+        except Exception:
+            pass
+
+
+scheduler.add_job(stale, 'interval', minutes=settings.STALE_INTERVAL)
+
 def refresh():
     db_gen = get_db_connection()   # this is a generator
     db = next(db_gen)              # get the actual Session object
@@ -26,7 +45,7 @@ def refresh():
         feed_repository = FeedRepository()
         entry_repository = EntryRepository()
         entry_service = EntryService(db, entry_repository)
-        rss_service = RssService(db, feed_repository, entry_service)
+        rss_service = RssService(db, feed_repository, entry_repository, entry_service)
         rss_service.RefreshFeeds()
     finally:
         try:
@@ -36,7 +55,7 @@ def refresh():
             pass
 
 
-scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL)
+#scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL)
 scheduler.start()
 
 
