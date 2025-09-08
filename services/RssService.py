@@ -105,40 +105,45 @@ class RssService:
             print(f"error fetching feed: {feed.feed_url}")
             print(err)
             return
+        try:
 
-        rss = feedparser.parse(response.content)
+            rss = feedparser.parse(response.content)
 
-        if rss.bozo:  # bozo flag is set when parsing error occurs
-            print(f"error parsing feed: {feed.feed_url}")
-            print(rss.bozo_exception)
-            return
+            if rss.bozo:  # bozo flag is set when parsing error occurs
+                print(f"error parsing feed: {feed.feed_url}")
+                print(rss.bozo_exception)
+                return
 
-        for entry in rss.entries:
-            # Try to extract description safely
-            description = ""
-            if "summary" in entry:
-                article = simple_json_from_html_string(
-                    entry.summary, use_readability=True
+            for entry in rss.entries:
+                # Try to extract description safely
+                description = ""
+                if "summary" in entry:
+                    article = simple_json_from_html_string(
+                        entry.summary, use_readability=True
+                    )
+                    if article.get("plain_text"):
+                        description = "\n".join(t["text"]
+                                                for t in article["plain_text"])
+
+                # Extract publication date
+                pub_date = None
+                if hasattr(entry, "published_parsed") and entry.published_parsed:
+                    pub_date = parser.parse(entry.published)
+                else:
+                    pub_date = datetime.now(timezone.utc)
+
+                # Use entry.id if present, else fallback to link
+                entry_uid = get_entry_uid(entry, entry.get("link"))
+
+                self.entry_service.create_entry(
+                    feed.id,
+                    entry_uid,
+                    entry.get("title", "No title"),
+                    entry.get("link"),
+                    description,
+                    pub_date,
                 )
-                if article.get("plain_text"):
-                    description = "\n".join(t["text"]
-                                            for t in article["plain_text"])
-
-            # Extract publication date
-            pub_date = None
-            if hasattr(entry, "published_parsed") and entry.published_parsed:
-                pub_date = parser.parse(entry.published)
-            else:
-                pub_date = datetime.now(timezone.utc)
-
-            # Use entry.id if present, else fallback to link
-            entry_uid = get_entry_uid(entry, entry.get("link"))
-
-            self.entry_service.create_entry(
-                feed.id,
-                entry_uid,
-                entry.get("title", "No title"),
-                entry.get("link"),
-                description,
-                pub_date,
-            )
+        except Exception as err:
+            print(f"error parsing feed: {feed.feed_url}")
+            print(err)
+            return

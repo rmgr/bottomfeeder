@@ -106,6 +106,35 @@ async def add_feed_page(
         }
     )
 
+@WebRouter.get("/update-feed/{feed_id}")
+async def update_feed_page(
+    feed_id: uuid.UUID,
+    request: Request,
+    current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+    feed_service: FeedService = Depends(),
+):
+    if not current_user:
+        print("no user")
+        return templates.TemplateResponse(
+            request=request, name="login.html"
+        )
+
+    feed = feed_service.get(
+        feed_id,
+        current_user.id
+    )
+    return templates.TemplateResponse(
+        request=request,
+        name="update_feed.html",
+        context={
+            "feed": feed,
+            "feed_name_error": "",
+            "feed_url_error": "",
+            "crawl_interval_error": "",
+            "age_window_error": ""
+        }
+    )
+
 
 @WebRouter.get("/import-feeds")
 async def import_feeds_page(
@@ -140,6 +169,26 @@ async def import_feeds(file: UploadFile,
     # Convert to string (assuming UTF-8 text file, e.g. OPML/XML)
     text = raw_bytes.decode("utf-8")
     rss_service.ImportOpml(text, current_user.id)
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+@WebRouter.post("/update-feed/{feed_id}", status_code=status.HTTP_201_CREATED)
+def update_feed(
+    feed_id: uuid.UUID,
+    current_user: Annotated[AccountSummary, Depends(get_current_user)],
+    feed_name: str = Form(...),
+    feed_url: str = Form(...),
+    crawl_interval: int | None = Form(None),
+    age_window: int | None = Form(None),
+    feed_service: FeedService = Depends(),
+):
+    feed_service.update_feed(
+        feed_id=feed_id,
+        feed_name=feed_name,
+        feed_url=feed_url,
+        created_by=current_user.id,
+        crawl_interval=crawl_interval,
+        age_window=age_window,
+    )
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 

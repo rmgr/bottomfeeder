@@ -1,5 +1,5 @@
 from typing import Optional, Tuple, List
-from models.Feed import Feed, FeedCreate
+from models.Feed import Feed, FeedCreate, FeedUpdate
 from sqlalchemy import desc
 from sqlalchemy.orm import Session
 import uuid
@@ -49,4 +49,19 @@ class FeedRepository:
         db.add(feed_data)
         db.flush()
         db.refresh(feed_data)
+        return feed_data.id
+
+    def update(self, feed_update: FeedUpdate, db: Session) -> uuid.UUID:
+        feed_data = db.query(Feed).filter(Feed.id == feed_update.id).first()
+        if not feed_data:
+            raise HTTPException(status_code=404, detail="Feed not found")
+
+        update_data = feed_update.dict(exclude_unset=True)
+        for key, value in update_data.items():
+            setattr(feed_data, key, value)
+
+        db.add(feed_data)  # optional, object is already in session
+        db.commit()
+        db.refresh(feed_data)
+
         return feed_data.id
