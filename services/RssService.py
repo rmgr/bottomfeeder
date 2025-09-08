@@ -142,7 +142,9 @@ class RssService:
             for entry in entries:
                 self.process_age_window(entry)
 
-            page += 1  
+            page += 1
+
+            ## TODO is this writing the unchanged records back to the db??
             self.db.commit()
         print("Finished processing age windows")
 
