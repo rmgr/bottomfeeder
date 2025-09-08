@@ -46,7 +46,7 @@ def refresh():
         entry_repository = EntryRepository()
         entry_service = EntryService(db, entry_repository)
         rss_service = RssService(db, feed_repository, entry_repository, entry_service)
-        rss_service.RefreshFeeds()
+        rss_service.refresh_feeds()
     finally:
         try:
             db.close()
@@ -55,7 +55,7 @@ def refresh():
             pass
 
 
-#scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL)
+scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL)
 scheduler.start()
 
 

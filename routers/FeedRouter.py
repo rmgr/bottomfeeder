@@ -38,5 +38,4 @@ def create_feed(
     return feed_service.create_feed(request.feed_name,
                                     request.feed_url,
                                     current_user.id,
-                                    request.crawl_interval,
                                     request.age_window)

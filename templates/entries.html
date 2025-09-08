@@ -13,13 +13,13 @@
 
     <div class="pagination">
         {% if entries.page > 1 %}
-            <a href="/feed/{{ feed_id }}?page={{ entries.page - 1 }}&page_size={{ entries.page_size }}">Previous</a>
+            <a href="?page={{ entries.page - 1 }}&page_size={{ entries.page_size }}">Previous</a>
         {% endif %}
 
         <span>Page {{ entries.page }}</span>
 
         {% if entries.page < entries.total_pages %}
-            <a href="/feed/{{ feed_id }}?page={{ entries.page + 1 }}&page_size={{ entries.page_size }}">Next</a>
+            <a href="?page={{ entries.page + 1 }}&page_size={{ entries.page_size }}">Next</a>
         {% endif %}
     </div>
 {% endblock %}

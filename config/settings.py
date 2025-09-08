@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     # CORS settings
     CORS_ORIGINS: List[str] = ["*"]
     REFRESH_INTERVAL: int = 30
-    STALE_INTERVAL: int = 1
+    STALE_INTERVAL: int = 30
 
     class Config:
         env_file = ".env"

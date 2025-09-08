@@ -31,6 +31,7 @@ class EntryService:
     def ListUnreadEntries(self,
                           user_id: uuid,
                           pagination: PaginationParams) -> PaginatedResponse:
+
         entries, total = self.entry_repository.list_entries(
             user_id,
             True,

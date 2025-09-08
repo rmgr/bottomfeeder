@@ -56,13 +56,11 @@ class FeedService:
                     feed_name: str,
                     feed_url: str,
                     created_by: uuid.UUID,
-                    crawl_interval: int,
                     age_window: int) -> uuid.UUID:
         feed_update = FeedUpdate(id=feed_id,
                                  feed_name=feed_name,
                                  feed_url=feed_url,
                                  created_by=created_by,
-                                 crawl_interval=crawl_interval,
                                  age_window=age_window)
         id = self.feed_repository.update(feed_update, self.db)
         self.db.commit()
@@ -72,12 +70,10 @@ class FeedService:
                     feed_name: str,
                     feed_url: str,
                     created_by: uuid.UUID,
-                    crawl_interval: int,
                     age_window: int) -> uuid.UUID:
         feed_create = FeedCreate(feed_name=feed_name,
                                  feed_url=feed_url,
                                  created_by=created_by,
-                                 crawl_interval=crawl_interval,
                                  age_window=age_window)
         id = self.feed_repository.create(feed_create, self.db)
         self.db.commit()

@@ -1,6 +1,6 @@
 from typing import Optional, Tuple, List
 from models.Feed import Feed, FeedCreate, FeedUpdate
-from sqlalchemy import desc
+from sqlalchemy import desc, and_
 from sqlalchemy.orm import Session
 import uuid
 
@@ -65,3 +65,7 @@ class FeedRepository:
         db.refresh(feed_data)
 
         return feed_data.id
+
+    def get_existing_feeds(self, feeds: List[str], user_id: uuid.UUID, db: Session) -> List[str]: 
+        feeds = db.query(Feed.feed_url).where(and_(Feed.feed_url.in_(feeds), Feed.created_by == user_id)).all()
+        return [url for (url,) in feeds]  # Flatten to a list of strings

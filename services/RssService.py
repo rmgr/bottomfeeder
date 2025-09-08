@@ -81,30 +81,57 @@ class RssService:
         self.entry_repository = entry_repository
         self.entry_service = entry_service
 
-    def ImportOpml(self, opml: str, created_by: uuid.UUID):
+    def import_opml(self, opml: str, created_by: uuid.UUID):
         document = OPML.from_xml(opml)
         feeds = parse_opml_outlines(document.body)
+
+        
+        # Deduplicate feeds by feed_url (keep first occurrence)
+        unique_feeds_dict = {}
         for feed in feeds:
-            feed_create = FeedCreate(feed_name=feed.title,
+            if feed.xml_url not in unique_feeds_dict:
+                unique_feeds_dict[feed.xml_url] = feed
+        unique_feeds = list(unique_feeds_dict.values())
+
+        # Extract feed URLs from OPML
+        feed_urls = [feed.xml_url for feed in unique_feeds]
+
+        # Get existing feeds using the repository method
+        existing_feed_urls = set(self.feed_repository.get_existing_feeds(feed_urls, created_by, self.db))
+        print(existing_feed_urls)
+
+        # Insert only feeds that are not already in the database
+        for feed in unique_feeds:
+            if feed.xml_url in existing_feed_urls:
+                continue  # skip existing feeds\
+            try:
+                feed_create = FeedCreate(feed_name=feed.title,
                                      feed_url=feed.xml_url,
                                      created_by=created_by)
-            self.feed_repository.create(feed_create, self.db)
+                self.feed_repository.create(feed_create, self.db)
+            except Exception as ex:
+                print("Failed to import feed")
+                print(ex)
+                self.db.rollback()
+                self.db.begin()
         self.db.commit()
 
-    def RefreshFeeds(self, page_number: int = 1):
+    def refresh_feeds(self):
+        page = 1
         page_size = 10
-        feeds, total = self.feed_repository.list(
-            self.db, page_number, page_size)
-        for feed in feeds:
-            self.RefreshFeed(feed)
-
-        if total/page_size > page_number:
-            self.RefreshFeeds(page_number + 1)
+        while True:
+            feeds, total = self.feed_repository.list(
+                self.db, page, page_size)
+            if not feeds:
+                break
+            for feed in feeds:
+                self.refresh_feed(feed)
+            page += 1
 
     def process_age_windows(self):
         page = 1
         page_size = 100
-
+        print("Starting to process age windows")
         while True:
             entries, total_count = self.entry_repository.list_all_entries(
                 True, self.db, page, page_size
@@ -117,16 +144,22 @@ class RssService:
 
             page += 1  
             self.db.commit()
+        print("Finished processing age windows")
 
 
     def process_age_window(self, entry):
         age_cutoff = entry.publish_date + timedelta(hours=entry.feed.age_window) 
-        if age_cutoff > datetime.now():
+        print("entry")
+        print(entry.publish_date)
+        print(age_cutoff)
+        print(entry.feed.age_window)
+        print("/entry")
+        if age_cutoff < datetime.now():
             entry.is_read = True
             self.entry_repository.update(entry, self.db)
             print(f"cutting off {entry.title}") 
 
-    def RefreshFeed(self, feed):
+    def refresh_feed(self, feed):
         try:
             response = requests.get(feed.feed_url, timeout=15)
             response.raise_for_status()
