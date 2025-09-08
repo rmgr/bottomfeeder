@@ -2,6 +2,7 @@ from typing import Optional
 from datetime import datetime
 from models.Entry import Entry
 from sqlmodel import SQLModel, Field, Relationship
+from sqlalchemy import UniqueConstraint
 import uuid
 
 
@@ -18,6 +19,10 @@ class FeedBase(SQLModel):
 
 class Feed(FeedBase, table=True):
     __tablename__ = "feeds"
+    __table_args__ = (
+        UniqueConstraint("feed_url", "created_by",
+                         name="uq_feed_url_created_by"),
+    )
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     feed_name: str = Field(index=False, nullable=False)
     feed_url: str = Field(index=False, nullable=False)

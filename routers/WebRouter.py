@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, Request, Query, status, Form, UploadFile
 from fastapi.responses import HTMLResponse, RedirectResponse
 from services.FeedService import FeedService
 from services.EntryService import EntryService
+from services.AccountService import AccountService
 from services.AccountService import (try_get_current_user, get_current_user)
 from services.RssService import RssService
 from models.Account import AccountSummary
@@ -12,6 +13,47 @@ import uuid
 WebRouter = APIRouter(tags=["web"])
 
 templates = Jinja2Templates(directory="templates")
+
+
+@WebRouter.get("/register")
+async def register_page(
+    request: Request,
+    current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+):
+    if current_user:
+        # already logged in → redirect home
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="register.html",
+        context={}
+    )
+
+
+@WebRouter.post("/register")
+async def register_form(
+    request: Request,
+    account_service: AccountService = Depends(),
+    account_name: str = Form(...),
+    email_address: str = Form(...),
+    password: str = Form(...),
+):
+    try:
+        account_service.create_account(account_name, email_address, password)
+    except ValidationError as ex:
+        return templates.TemplateResponse(
+            request=request,
+            name="register.html",
+            context={
+                "errors": ex.errors(),
+                "account_name": account_name,
+                "email_address": email_address,
+            },
+            status_code=422
+        )
+
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
 @WebRouter.get("/feeds")

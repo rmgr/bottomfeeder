@@ -27,7 +27,7 @@ class Settings(BaseSettings):
     LOG_LEVEL: str = "INFO"
     # CORS settings
     CORS_ORIGINS: List[str] = ["*"]
-    REFRESH_INTERVAL: int = 1
+    REFRESH_INTERVAL: int = 30
 
     class Config:
         env_file = ".env"

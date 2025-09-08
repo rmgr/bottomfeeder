@@ -1,7 +1,8 @@
 from typing import Optional, List, Tuple
 from models.Entry import Entry, EntryCreate
+from models.Feed import Feed
 from sqlalchemy import desc, and_
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, joinedload
 import uuid
 
 
@@ -20,11 +21,13 @@ class EntryRepository:
                      db: Session,
                      page: int = 1,
                      page_size: int = 10) -> Tuple[List[Entry], int]:
-        query = db.query(Entry)
+        query = db.query(Entry).join(Feed, Entry.feed_id == Feed.id)
         total = query.count()
         if only_unread:
-            query = query.where(Entry.is_read == False)
-        feeds = query.order_by(
+            query = query.where(
+                and_(Entry.is_read == False, Feed.created_by == user_id))
+        feeds = query.options(joinedload(Entry.feed)
+                              ).order_by(
             desc(Entry.publish_date)
         ).offset(
             (page - 1) * page_size
