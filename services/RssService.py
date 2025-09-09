@@ -192,6 +192,8 @@ class RssService:
                 pub_date = None
                 if hasattr(entry, "published_parsed") and entry.published_parsed:
                     pub_date = parser.parse(entry.published)
+                elif hasattr(entry, "updated_parsed") and entry.updated_parsed:
+                    pub_date = parser.parse(entry.updated)
                 else:
                     pub_date = datetime.now(timezone.utc)
 
