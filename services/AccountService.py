@@ -118,8 +118,6 @@ async def try_get_current_user(
             return await validate_token(access_token, account_service)
 
     except Exception as e:
-        # TODO: Logging
-        print(e)
         logging.error(e, exc_info=True)
         pass
     return None

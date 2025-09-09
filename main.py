@@ -12,6 +12,8 @@ from routers.EntryRouter import EntryRouter
 from routers.WebRouter import WebRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from services.RssService import RssService
+from datetime import datetime
+import logging
 
 app = FastAPI()
 scheduler = BackgroundScheduler()
@@ -36,7 +38,7 @@ def stale():
             pass
 
 
-scheduler.add_job(stale, 'interval', minutes=settings.STALE_INTERVAL)
+scheduler.add_job(stale, 'interval', minutes=settings.STALE_INTERVAL, next_run_time=datetime.now())
 
 def refresh():
     db_gen = get_db_connection()   # this is a generator
@@ -55,14 +57,13 @@ def refresh():
             pass
 
 
-scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL)
+scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL, next_run_time=datetime.now())
 scheduler.start()
 
 
 @app.on_event("startup")
 def on_startup():
     create_db_and_tables()
-
 
 app.add_middleware(
     CORSMiddleware,
@@ -75,3 +76,4 @@ app.include_router(AccountRouter)
 app.include_router(FeedRouter)
 app.include_router(EntryRouter)
 app.include_router(WebRouter)
+logging.basicConfig(level=getattr(logging, settings.LOG_LEVEL.upper() , logging.INFO), format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",datefmt="%Y-%m-%d %H:%M:%S")

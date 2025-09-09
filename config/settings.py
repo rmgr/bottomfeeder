@@ -24,7 +24,7 @@ class Settings(BaseSettings):
     DEBUG: bool = True
     ENVIRONMENT: str = "development"
     # Logging
-    LOG_LEVEL: str = "INFO"
+    LOG_LEVEL: str = "DEBUG"
     # CORS settings
     CORS_ORIGINS: List[str] = ["*"]
     REFRESH_INTERVAL: int = 30

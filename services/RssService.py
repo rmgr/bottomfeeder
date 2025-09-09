@@ -14,6 +14,7 @@ import hashlib
 from opyml import OPML
 import uuid
 from dateutil import parser
+import logging
 
 
 def parse_opml_outlines(input):
@@ -98,7 +99,7 @@ class RssService:
 
         # Get existing feeds using the repository method
         existing_feed_urls = set(self.feed_repository.get_existing_feeds(feed_urls, created_by, self.db))
-        print(existing_feed_urls)
+        logging.info(existing_feed_urls)
 
         # Insert only feeds that are not already in the database
         for feed in unique_feeds:
@@ -110,11 +111,41 @@ class RssService:
                                      created_by=created_by)
                 self.feed_repository.create(feed_create, self.db)
             except Exception as ex:
-                print("Failed to import feed")
-                print(ex)
+                logging.info("Failed to import feed")
+                logging.info(ex)
                 self.db.rollback()
                 self.db.begin()
         self.db.commit()
+
+
+    def process_age_windows(self):
+        page = 1
+        page_size = 100
+        logging.info("Starting to process age windows")
+        while True:
+            entries, total_count = self.entry_repository.list_all_entries(
+                False, self.db, page, page_size
+            )
+            if len(entries) == 0:  # no more entries
+                break
+
+            for entry in entries:
+                self.process_age_window(entry)
+
+            page += 1
+            logging.info(page)
+            ## TODO is this writing the unchanged records back to the db??
+        self.db.commit()
+        logging.info("Finished processing age windows")
+
+
+    def process_age_window(self, entry):
+        age_cutoff = entry.publish_date + timedelta(hours=entry.feed.age_window) 
+        if age_cutoff < datetime.now():
+            entry.is_read = True
+            self.entry_repository.update(entry, self.db)
+            logging.info(f"cutting off {entry.title}") 
+
 
     def refresh_feeds(self):
         page = 1
@@ -128,54 +159,22 @@ class RssService:
                 self.refresh_feed(feed)
             page += 1
 
-    def process_age_windows(self):
-        page = 1
-        page_size = 100
-        print("Starting to process age windows")
-        while True:
-            entries, total_count = self.entry_repository.list_all_entries(
-                True, self.db, page, page_size
-            )
-            if not entries:  # no more entries
-                break
-
-            for entry in entries:
-                self.process_age_window(entry)
-
-            page += 1
-
-            ## TODO is this writing the unchanged records back to the db??
-            self.db.commit()
-        print("Finished processing age windows")
-
-
-    def process_age_window(self, entry):
-        age_cutoff = entry.publish_date + timedelta(hours=entry.feed.age_window) 
-        print("entry")
-        print(entry.publish_date)
-        print(age_cutoff)
-        print(entry.feed.age_window)
-        print("/entry")
-        if age_cutoff < datetime.now():
-            entry.is_read = True
-            self.entry_repository.update(entry, self.db)
-            print(f"cutting off {entry.title}") 
 
     def refresh_feed(self, feed):
         try:
             response = requests.get(feed.feed_url, timeout=15)
             response.raise_for_status()
         except Exception as err:
-            print(f"error fetching feed: {feed.feed_url}")
-            print(err)
+            logging.error(f"error fetching feed: {feed.feed_url}")
+            logging.error(err)
             return
         try:
 
             rss = feedparser.parse(response.content)
 
             if rss.bozo:  # bozo flag is set when parsing error occurs
-                print(f"error parsing feed: {feed.feed_url}")
-                print(rss.bozo_exception)
+                logging.error(f"error parsing feed: {feed.feed_url}")
+                logging.error(rss.bozo_exception)
                 return
 
             for entry in rss.entries:
@@ -208,6 +207,6 @@ class RssService:
                     pub_date,
                 )
         except Exception as err:
-            print(f"error parsing feed: {feed.feed_url}")
-            print(err)
+            logging.error(f"error parsing feed: {feed.feed_url}")
+            logging.error(err)
             return
