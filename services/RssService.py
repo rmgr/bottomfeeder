@@ -15,7 +15,7 @@ from opyml import OPML
 import uuid
 from dateutil import parser
 import logging
-
+import time
 
 def parse_opml_outlines(input):
     output = []
@@ -187,7 +187,13 @@ class RssService:
                     if article.get("plain_text"):
                         description = "\n".join(t["text"]
                                                 for t in article["plain_text"])
-
+                # Extract page body if requested
+                if feed.crawl_page_content:
+                    page_content = requests.get(entry.get("link"), timeout=15, headers={ 'User-Agent': 'rmgr rss reader' })
+                    summarised_page_content = simple_json_from_html_string(str(page_content.content), use_readability=True)
+                    if summarised_page_content.get("content"):
+                        description = summarised_page_content["content"] 
+                    time.sleep(500)
                 # Extract publication date
                 pub_date = None
                 if hasattr(entry, "published_parsed") and entry.published_parsed:
