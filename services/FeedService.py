@@ -56,12 +56,14 @@ class FeedService:
                     feed_name: str,
                     feed_url: str,
                     created_by: uuid.UUID,
-                    age_window: int) -> uuid.UUID:
+                    age_window: int,
+                    crawl_page_content: bool) -> uuid.UUID:
         feed_update = FeedUpdate(id=feed_id,
                                  feed_name=feed_name,
                                  feed_url=feed_url,
                                  created_by=created_by,
-                                 age_window=age_window)
+                                 age_window=age_window,
+                                 crawl_page_content=crawl_page_content)
         id = self.feed_repository.update(feed_update, self.db)
         self.db.commit()
         return id

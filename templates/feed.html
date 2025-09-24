@@ -1,0 +1,26 @@
+{% extends "layout.html" %}
+{% block content %}
+<a href="{{ feed.feed_url }}"><h1>{{ feed.feed_name }}</h1></a>
+<a href="/update-feed/{{ feed.id }}">Update Feed</a>
+    {% for entry in entries.items %}
+        <article>
+            <h2><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h2>
+            <p>{{ entry.publish_date }}</p>
+            <p><a href="/feed/{{entry.feed.id}}">{{ entry.feed.feed_name }}</a></p>
+            <p>{{ entry.summary }}</p>
+        </article>
+    {% endfor %}
+
+    <div class="pagination">
+        {% if entries.page > 1 %}
+            <a href="?page={{ entries.page - 1 }}&page_size={{ entries.page_size }}">Previous</a>
+        {% endif %}
+
+        <span>Page {{ entries.page }}</span>
+
+        {% if entries.page < entries.total_pages %}
+            <a href="?page={{ entries.page + 1 }}&page_size={{ entries.page_size }}">Next</a>
+        {% endif %}
+    </div>
+{% endblock %}
+

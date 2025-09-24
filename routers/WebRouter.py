@@ -175,6 +175,7 @@ def update_feed(
     feed_name: str = Form(...),
     feed_url: str = Form(...),
     age_window: int | None = Form(None),
+    crawl_page_content: bool = Form(...),
     feed_service: FeedService = Depends(),
 ):
     feed_service.update_feed(
@@ -183,6 +184,7 @@ def update_feed(
         feed_url=feed_url,
         created_by=current_user.id,
         age_window=age_window,
+        crawl_page_content=crawl_page_content,
     )
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -210,6 +212,7 @@ async def entries(
     request: Request,
     current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
     entry_service: EntryService = Depends(),
+    feed_service: FeedService = Depends(),
     page: int = Query(1, ge=1),
     page_size: int = Query(10, ge=1, le=100)
 ):
@@ -218,6 +221,7 @@ async def entries(
             request=request, name="login.html"
         )
 
+    feed = feed_service.get(feed_id, current_user.id)
     entries = entry_service.ListEntriesForFeed(
         feed_id,
         current_user.id,
@@ -226,9 +230,9 @@ async def entries(
 
     return templates.TemplateResponse(
         request=request,
-        name="entries.html",
+        name="feed.html",
         context={
-            "feed_id": feed_id,
+            "feed": feed,
             "entries": entries,
         }
     )
