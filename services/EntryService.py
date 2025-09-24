@@ -128,3 +128,8 @@ class EntryService:
 
         except IntegrityError:
             self.db.rollback()
+
+    def exists(self,
+                  entry_id: str) -> bool:
+        return self.entry_repository.exists(entry_id, self.db)
+

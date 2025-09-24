@@ -1,7 +1,7 @@
 from typing import Optional, List, Tuple
 from models.Entry import Entry, EntryCreate
 from models.Feed import Feed
-from sqlalchemy import desc, and_
+from sqlalchemy import desc, and_, select, exists
 from sqlalchemy.orm import Session, joinedload
 import uuid
 
@@ -82,3 +82,7 @@ class EntryRepository:
         db.flush()
         db.refresh(feed_data)
         return feed_data.id
+
+    def exists(self, entry_id: uuid.UUID, db: Session) -> bool:
+        stmt = select(exists().where(Entry.id == entry_id))
+        return db.scalar(stmt)

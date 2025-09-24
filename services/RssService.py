@@ -187,13 +187,17 @@ class RssService:
                     if article.get("plain_text"):
                         description = "\n".join(t["text"]
                                                 for t in article["plain_text"])
+                entry_uid = get_entry_uid(entry, entry.get("link"))
                 # Extract page body if requested
                 if feed.crawl_page_content:
-                    page_content = requests.get(entry.get("link"), timeout=15, headers={ 'User-Agent': 'rmgr rss reader' })
-                    summarised_page_content = simple_json_from_html_string(str(page_content.content), use_readability=True)
-                    if summarised_page_content.get("content"):
-                        description = summarised_page_content["content"] 
-                    time.sleep(500)
+                    exists = self.entry_service.exists(entry_uid)
+                    if not exists:
+                        response = requests.get(entry.get("link"), timeout=15, headers={ 'User-Agent': 'rmgr rss reader' })
+                        content = response.content.decode(response.encoding or 'utf-8', errors='replace')
+                        summarised = simple_json_from_html_string(content, use_readability=True)
+                        if summarised.get("content"):
+                            raw_html = summarised["content"]
+                            description = raw_html
                 # Extract publication date
                 pub_date = None
                 if hasattr(entry, "published_parsed") and entry.published_parsed:
@@ -204,9 +208,8 @@ class RssService:
                     pub_date = datetime.now(timezone.utc)
 
                 # Use entry.id if present, else fallback to link
-                entry_uid = get_entry_uid(entry, entry.get("link"))
 
-                self.entry_service.create_entry(
+                entry_id = self.entry_service.create_entry(
                     feed.id,
                     entry_uid,
                     entry.get("title", "No title"),
