@@ -16,13 +16,14 @@ class AccountBase(SQLModel):
 
 class Account(AccountBase, table=True):
     __tablename__ = "account"
+
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
     account_name: str = Field(index=True, nullable=False)
     email_address: EmailStr = Field(index=True, nullable=False)
-    hashed_password: str
+    hashed_password: str = Field(nullable=False)
     is_active: bool = Field(default=True)
     date_created: datetime = Field(default_factory=datetime.utcnow)
-    date_updated: Optional[datetime]
+    date_updated: Optional[datetime] = Field(default=None, nullable=True)
 
 
 class AccountSummary(AccountBase):
@@ -34,5 +35,5 @@ class AccountCreate(SQLModel):
     email_address: EmailStr
     hashed_password: str
     is_active: bool = True
-    date_created: datetime = datetime.utcnow()
+    date_created: datetime = Field(default_factory=datetime.utcnow)
     date_updated: Optional[datetime] = None
