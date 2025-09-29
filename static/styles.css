@@ -1,0 +1,62 @@
+/* Base Colors */
+:root {
+  --dark-navy: #FAB3A9;
+  --deep-blue: #C6AD94;
+  --sage-green: #7FB285;
+  --warm-beige: #463239;
+  --soft-coral: #ED6B86;
+
+  --bg-color: var(--warm-beige);
+  --text-color: var(--dark-navy);
+  --accent-color: var(--sage-green);
+  --link-color: var(--deep-blue);
+  --link-hover: var(--soft-coral);
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-family: sans-serif;
+  margin: 0;
+  padding: 2rem;
+  line-height: 1.4;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--text-color);
+  margin-bottom: 1rem;
+}
+
+h1 {
+  font-size: 2.5rem;
+  border-bottom: 3px solid var(--accent-color);
+  padding-bottom: 0.5rem;
+}
+
+h2 {
+  font-size: 2rem;
+  color: var(--link-color);
+}
+
+a {
+  color: var(--link-color);
+  font-weight: bold;
+  transition: color 0.2s ease;
+  text-decoration: none;
+}
+
+a:hover, a:hover > h1{
+  color: var(--link-hover);
+}
+
+input {
+  border-radius: 4px;
+  border: none;
+  display: block;
+  padding: 5px 4px 5px 14px;
+  min-width: 25%;
+}
+
+input[type=checkbox] {
+  display: inline;
+}
