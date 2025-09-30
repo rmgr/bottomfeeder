@@ -1,15 +1,16 @@
 from typing import Annotated
-from fastapi import APIRouter, Depends, Request, Query, status, Form, UploadFile
+from fastapi import APIRouter, Depends, Request, Query, status, Form, UploadFile, Response, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
 from services.FeedService import FeedService
 from services.EntryService import EntryService
 from services.AccountService import AccountService
-from services.AccountService import (try_get_current_user, get_current_user)
+from services.AccountService import (try_get_current_user)
 from services.RssService import RssService
 from models.Account import AccountSummary
 from models.Pagination import PaginationParams
 from fastapi.templating import Jinja2Templates
 import uuid
+from datetime import timedelta
 WebRouter = APIRouter(tags=["web"])
 
 templates = Jinja2Templates(directory="templates")
@@ -56,6 +57,94 @@ async def register_form(
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
+
+@WebRouter.get("/login")
+async def login_page(
+    request: Request,
+    current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+):
+    if current_user:
+        # already logged in → redirect home
+        return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="login.html",
+        context={}
+    )
+
+
+@WebRouter.post("/login")
+async def login_form(
+    request: Request,
+    account_service: AccountService = Depends(),
+    email_address: str = Form(...),
+    password: str = Form(...),
+):
+    # Authenticate user
+    user = account_service.login(email_address, password)
+
+    if not user:
+        return templates.TemplateResponse(
+            request=request,
+            name="login.html",
+            context={
+                "error": "Invalid email or password",
+                "email_address": email_address,
+            },
+            status_code=401
+        )
+
+    # Create refresh token (long-lived, 30 days)
+    session_id = account_service.create_session(user.id)
+
+    # Create response with redirect
+    redirect_response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Set session ID cookie
+    redirect_response.set_cookie(
+        key="session_id",
+        value=str(session_id),
+        httponly=True,
+        secure=False,  # Set to True in production with HTTPS
+        samesite="lax",
+        max_age=2592000  # 30 days in seconds
+    )
+
+    return redirect_response
+
+
+@WebRouter.post("/logout")
+async def logout(
+    session_id: Annotated[str | None, Cookie()] = None,
+    account_service: AccountService = Depends(),
+):
+    # Revoke the refresh token if we have a session
+    if session_id:
+        try:
+            session_uuid = uuid.UUID(session_id)
+            account_service.revoke_refresh_token(session_uuid)
+        except (ValueError, Exception):
+            pass
+
+    # Create redirect response
+    redirect_response = RedirectResponse(url="/login", status_code=status.HTTP_303_SEE_OTHER)
+
+    # Clear all auth cookies
+    redirect_response.delete_cookie(key="session_id")
+
+    return redirect_response
+
+
+@WebRouter.get("/logout")
+async def logout_get(
+    session_id: Annotated[str | None, Cookie()] = None,
+    account_service: AccountService = Depends(),
+):
+    """GET endpoint for logout link"""
+    return await logout(session_id, account_service)
+
+
 @WebRouter.get("/feeds")
 async def feeds(
     request: Request,
@@ -65,7 +154,6 @@ async def feeds(
     page_size: int = Query(10, ge=1, le=100)
 ):
     if not current_user:
-        print("no user")
         return templates.TemplateResponse(
             request=request, name="login.html"
         )
@@ -157,7 +245,7 @@ async def import_feeds_page(
 
 @WebRouter.post("/import-feeds")
 async def import_feeds(file: UploadFile,
-                       current_user: Annotated[AccountSummary, Depends(get_current_user)],
+                       current_user: Annotated[AccountSummary, Depends(try_get_current_user)],
                        rss_service: RssService = Depends()
                        ):
 
@@ -168,10 +256,11 @@ async def import_feeds(file: UploadFile,
     rss_service.import_opml(text, current_user.id)
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
+
 @WebRouter.post("/update-feed/{feed_id}", status_code=status.HTTP_201_CREATED)
 def update_feed(
     feed_id: uuid.UUID,
-    current_user: Annotated[AccountSummary, Depends(get_current_user)],
+    current_user: Annotated[AccountSummary, Depends(try_get_current_user)],
     feed_name: str = Form(...),
     feed_url: str = Form(...),
     age_window: int | None = Form(None),
@@ -191,7 +280,7 @@ def update_feed(
 
 @WebRouter.post("/add-feed", status_code=status.HTTP_201_CREATED)
 def create_feed(
-    current_user: Annotated[AccountSummary, Depends(get_current_user)],
+    current_user: Annotated[AccountSummary, Depends(try_get_current_user)],
     feed_name: str = Form(...),
     feed_url: str = Form(...),
     age_window: int | None = Form(None),
@@ -237,19 +326,16 @@ async def entries(
         }
     )
 
-
 @WebRouter.get("/", response_class=HTMLResponse)
-async def entries(current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
-                  request: Request,
-                  entry_service: EntryService = Depends(),
-                  page: int = Query(1, ge=1),
-                  page_size: int = Query(10, ge=1, le=100)
-                  ):
-
+async def entries(
+    request: Request,
+    current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
+    entry_service: EntryService = Depends(),
+    page: int = Query(1, ge=1),
+    page_size: int = Query(10, ge=1, le=100)
+):
     if not current_user:
-        return templates.TemplateResponse(
-            request=request, name="login.html"
-        )
+        return templates.TemplateResponse(request=request, name="login.html")
 
     entries = entry_service.ListUnreadEntries(
         current_user.id,
@@ -257,11 +343,8 @@ async def entries(current_user: Annotated[AccountSummary | None, Depends(try_get
     )
 
     return templates.TemplateResponse(
-        request=request,
         name="entries.html",
-        context={
-            "entries": entries,
-        }
+        context={"request": request, "entries": entries},
     )
 
 

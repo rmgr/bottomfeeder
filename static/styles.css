@@ -1,16 +1,10 @@
 /* Base Colors */
 :root {
-  --dark-navy: #FAB3A9;
-  --deep-blue: #C6AD94;
-  --sage-green: #7FB285;
-  --warm-beige: #463239;
-  --soft-coral: #ED6B86;
-
-  --bg-color: var(--warm-beige);
-  --text-color: var(--dark-navy);
-  --accent-color: var(--sage-green);
-  --link-color: var(--deep-blue);
-  --link-hover: var(--soft-coral);
+  --bg-color: #463239;
+  --text-color: #FAB3A9;
+  --accent-color: #7FB285;
+  --link-color: #C6AD94;
+  --link-hover: #ED6B86;
 }
 
 body {
@@ -59,4 +53,9 @@ input {
 
 input[type=checkbox] {
   display: inline;
+}
+
+a.title {
+  font-size: 1.2rem;
+  color: var(--text-color);
 }

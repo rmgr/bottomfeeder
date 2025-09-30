@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    <h1>List of Feeds</h1>
+	<h1>Feeds</h1>
 
     {% for item in feeds.items %}
         <a href="/feed/{{item.id}}"><h1>{{ item.feed_name }}</h1></a>

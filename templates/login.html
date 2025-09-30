@@ -1,10 +1,17 @@
 {% extends "layout.html" %}
 {% block content %}
-<form action="/v1/account/login" method="post">
-      <label>Username: <input type="text" name="username"></label><br>
-      <label>Password: <input type="password" name="password"></label><br>
-      <button type="submit">Login</button>
-	<a href="/register">Register</a>
-    </form>
-{% endblock %}
+<div class="login-container">
+    {% if error %}
+    <div class="error-message">
+        {{ error }}
+    </div>
+    {% endif %}
 
+    <form action="/login" method="post">
+        <label>Email: <input type="email" name="email_address" value="{{ email_address or '' }}" required></label><br>
+        <label>Password: <input type="password" name="password" required></label><br>
+        <button type="submit">Login</button>
+        <a href="/register">Register</a>
+    </form>
+</div>
+{% endblock %}

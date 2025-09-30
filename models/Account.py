@@ -27,7 +27,8 @@ class Account(AccountBase, table=True):
 
 
 class AccountSummary(AccountBase):
-    pass
+    access_token: str = None
+    refresh_token: str = None
 
 
 class AccountCreate(SQLModel):

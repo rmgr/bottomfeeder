@@ -996,7 +996,7 @@ requires-dist = [
     { name = "feedparser", specifier = ">=6.0.11" },
     { name = "fitparse", specifier = ">=1.2.0" },
     { name = "jinja2", specifier = ">=3.1.6" },
-    { name = "opyml", specifier = ">=0.1.2,<4.0" },
+    { name = "opyml", specifier = ">=0.1.2" },
     { name = "psycopg2-binary", specifier = ">=2.9.10" },
     { name = "pydantic-settings", specifier = ">=2.2.1" },
     { name = "pyjwt", specifier = ">=2.10.1" },

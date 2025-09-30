@@ -6,9 +6,6 @@ from config.settings import settings
 from repositories.FeedRepository import FeedRepository
 from repositories.EntryRepository import EntryRepository
 from services.EntryService import EntryService
-from routers.AccountRouter import AccountRouter
-from routers.FeedRouter import FeedRouter
-from routers.EntryRouter import EntryRouter
 from routers.WebRouter import WebRouter
 from apscheduler.schedulers.background import BackgroundScheduler
 from services.RssService import RssService
@@ -72,8 +69,5 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-app.include_router(AccountRouter)
-app.include_router(FeedRouter)
-app.include_router(EntryRouter)
 app.include_router(WebRouter)
 logging.basicConfig(level=getattr(logging, settings.LOG_LEVEL.upper() , logging.INFO), format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",datefmt="%Y-%m-%d %H:%M:%S")

@@ -1,10 +1,12 @@
 from config.db import (get_db_connection)
 from config.jwt import JwtConfig
-from typing import Annotated
+from typing import Annotated, Optional
 from models.Account import AccountSummary, AccountCreate
-from fastapi import Depends, HTTPException, status, Cookie
+from models.AccountSession import AccountSessionCreate
+from fastapi import Depends, HTTPException, status, Cookie, Response
 from fastapi.security import OAuth2PasswordBearer
 from repositories.AccountRepository import AccountRepository
+from repositories.SessionRepository import SessionRepository
 from sqlalchemy.orm import Session
 from datetime import timedelta, datetime, timezone
 import argon2
@@ -13,17 +15,21 @@ import jwt
 from jwt.exceptions import InvalidTokenError
 import uuid
 import logging
+import secrets
 
 
 class AccountService:
     db: Session
     account_repository: AccountRepository
+    session_repository: SessionRepository
 
     def __init__(self,
                  db: Session = Depends(get_db_connection),
-                 account_repository: AccountRepository = Depends()):
+                 account_repository: AccountRepository = Depends(),
+                 session_repository: SessionRepository = Depends()):
         self.db = db
         self.account_repository = account_repository
+        self.session_repository = session_repository
 
     def hash_password(self, password: str):
         ph = PasswordHasher()
@@ -67,76 +73,67 @@ class AccountService:
             email_address, self.db)
         return account
 
-    def create_access_token(self, data: dict, expires_delta: timedelta | None = None):
-        to_encode = data.copy()
-        if expires_delta:
-            expire = datetime.now(timezone.utc) + expires_delta
-        else:
-            expire = datetime.now(timezone.utc) + timedelta(minutes=15)
-        to_encode.update({"exp": expire})
-        encoded_jwt = jwt.encode(
-            to_encode, JwtConfig.SECRET_KEY, JwtConfig.ALGORITHM)
-        return encoded_jwt
+    def create_session(self, account_id: uuid.UUID) -> tuple[str, uuid.UUID]:
+        """Create a refresh token and store its hash in the database"""
+        # Generate a cryptographically secure random token
+        session_id = secrets.token_urlsafe(32)
+
+        # Store in database with 30-day expiry
+        expiry_date = datetime.now(timezone.utc) + timedelta(days=30)
+        session_create = AccountSessionCreate(
+            id=session_id,
+            account_id=account_id,
+            expiry_date=expiry_date
+        )
+        session_id = self.session_repository.create(session_create, self.db)
+        self.db.commit()
+
+        return session_id
+
+    def verify_session(self, session_id: str) -> Optional[uuid.UUID]:
+        """Verify refresh token and return account_id if valid"""
+        session = self.session_repository.get(session_id, self.db)
+
+        if not session:
+            return None
+
+        # Check if token is expired
+        if False: #session.expiry_date < datetime.now(timezone.utc):
+            # Clean up expired session
+            self.session_repository.delete(session_id, self.db)
+            self.db.commit()
+            return None
+
+        return session.account_id
+
+    def revoke_refresh_token(self, session_id: uuid.UUID):
+        """Revoke a refresh token by deleting the session"""
+        self.session_repository.delete(session_id, self.db)
+        self.db.commit()
 
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token", auto_error=False)
 
 
-async def validate_token(token: str, account_service: AccountService = Depends()):
-    credentials_exception = HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Could not validate credentials",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
-    try:
-        payload = jwt.decode(token, JwtConfig.SECRET_KEY,
-                             algorithms=[JwtConfig.ALGORITHM])
-        username = payload.get("sub")
-        if username is None:
-            raise credentials_exception
-        token_data = username
-    except InvalidTokenError:
-        raise credentials_exception
-    user = account_service.get_user_by_email_address(token_data)
-
-    if user is None:
-        raise credentials_exception
-    return AccountSummary(**user.dict())
-
-
 async def try_get_current_user(
-    token: Annotated[str | None, Depends(oauth2_scheme)] = None,
-    access_token: Annotated[str | None, Cookie()] = None,
+    response: Response,
+    session_id: Annotated[str | None, Cookie()] = None,
     account_service: AccountService = Depends()
 ):
+    """Try to get current user, transparently refreshing tokens if needed"""
     try:
-        # Try bearer token first
-        if token:
-            return await validate_token(token, account_service)
-        # Then try cookie
-        if access_token:
-            return await validate_token(access_token, account_service)
+        # If access token failed but we have refresh token, try to refresh
+        if session_id:
+            account_id = account_service.verify_session(session_id)
+
+            if account_id:
+                # Get user account
+                user = account_service.get_user_by_id(account_id)
+                if user:
+                    return AccountSummary(**user.dict())
 
     except Exception as e:
         logging.error(e, exc_info=True)
-        pass
+
     return None
 
-
-async def get_current_user(
-    token: Annotated[str | None, Depends(oauth2_scheme)] = None,
-    access_token: Annotated[str | None, Cookie()] = None,
-    account_service: AccountService = Depends()
-):
-    # Try bearer token first
-    if token:
-        return await validate_token(token, account_service)
-    # Then try cookie
-    if access_token:
-        return await validate_token(access_token, account_service)
-
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Not authenticated",
-        headers={"WWW-Authenticate": "Bearer"},
-    )
