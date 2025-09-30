@@ -122,8 +122,7 @@ async def logout(
     # Revoke the refresh token if we have a session
     if session_id:
         try:
-            session_uuid = uuid.UUID(session_id)
-            account_service.revoke_refresh_token(session_uuid)
+            account_service.revoke_session(session_id)
         except (ValueError, Exception):
             pass
 
@@ -249,6 +248,8 @@ async def import_feeds(file: UploadFile,
                        rss_service: RssService = Depends()
                        ):
 
+    if not current_user:
+        raise Exception
     raw_bytes = await file.read()
 
     # Convert to string (assuming UTF-8 text file, e.g. OPML/XML)
@@ -267,6 +268,8 @@ def update_feed(
     crawl_page_content: bool = Form(...),
     feed_service: FeedService = Depends(),
 ):
+    if not current_user:
+        raise Exception
     feed_service.update_feed(
         feed_id=feed_id,
         feed_name=feed_name,
@@ -286,6 +289,8 @@ def create_feed(
     age_window: int | None = Form(None),
     feed_service: FeedService = Depends(),
 ):
+    if not current_user:
+        raise Exception
     feed_service.create_feed(
         feed_name=feed_name,
         feed_url=feed_url,
