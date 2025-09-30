@@ -6,7 +6,8 @@ import uuid
 
 
 class AccountSessionBase(SQLModel):
-    account_id: str
+    id: str
+    account_id: uuid.UUID 
     expiry_date: datetime
 
 

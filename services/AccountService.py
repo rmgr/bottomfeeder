@@ -16,7 +16,8 @@ from jwt.exceptions import InvalidTokenError
 import uuid
 import logging
 import secrets
-
+import hashlib
+import pytz
 
 class AccountService:
     db: Session
@@ -43,6 +44,10 @@ class AccountService:
         except argon2.exceptions.VerifyMismatchError:
             return False
         return match
+
+    def hash_session_token(self, token: str) -> str:
+        """Hash a session token for secure storage"""
+        return hashlib.sha256(token.encode()).hexdigest()
 
     def create_account(self, account_name: str, email_address: str, password: str) -> uuid.UUID:
         account_create = AccountCreate(account_name=account_name,
@@ -77,36 +82,44 @@ class AccountService:
         """Create a refresh token and store its hash in the database"""
         # Generate a cryptographically secure random token
         session_id = secrets.token_urlsafe(32)
-
+        
+        session_token_hash = self.hash_session_token(session_id)
         # Store in database with 30-day expiry
         expiry_date = datetime.now(timezone.utc) + timedelta(days=30)
         session_create = AccountSessionCreate(
-            id=session_id,
+            id=session_token_hash,
             account_id=account_id,
             expiry_date=expiry_date
         )
-        session_id = self.session_repository.create(session_create, self.db)
+        self.session_repository.create(session_create, self.db)
         self.db.commit()
 
         return session_id
+    def verify_session(self, session_token: str) -> Optional[uuid.UUID]:
+        # Hash the incoming token to look it up
+        session_token_hash = self.hash_session_token(session_token)
 
-    def verify_session(self, session_id: str) -> Optional[uuid.UUID]:
-        """Verify refresh token and return account_id if valid"""
-        session = self.session_repository.get(session_id, self.db)
+        session = self.session_repository.get(session_token_hash, self.db)
 
         if not session:
             return None
 
+
+        # Ensure expiry_date is timezone-aware for comparison
+        expiry_date = session.expiry_date
+        if expiry_date.tzinfo is None:
+            expiry_date = expiry_date.replace(tzinfo=timezone.utc)
+
         # Check if token is expired
-        if False: #session.expiry_date < datetime.now(timezone.utc):
+        if expiry_date < datetime.now(timezone.utc):
             # Clean up expired session
-            self.session_repository.delete(session_id, self.db)
+            self.session_repository.delete(session_token_hash, self.db)
             self.db.commit()
             return None
 
         return session.account_id
 
-    def revoke_refresh_token(self, session_id: uuid.UUID):
+    def revoke_session(self, session_id: str):
         """Revoke a refresh token by deleting the session"""
         self.session_repository.delete(session_id, self.db)
         self.db.commit()
