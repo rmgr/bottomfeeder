@@ -18,8 +18,8 @@ class Account(AccountBase, table=True):
     __tablename__ = "account"
 
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    account_name: str = Field(index=True, nullable=False)
-    email_address: EmailStr = Field(index=True, nullable=False)
+    account_name: str = Field(index=True, nullable=False, unique=True)
+    email_address: EmailStr = Field(index=True, nullable=False, unique=True)
     hashed_password: str = Field(nullable=False)
     is_active: bool = Field(default=True)
     date_created: datetime = Field(default_factory=datetime.utcnow)
