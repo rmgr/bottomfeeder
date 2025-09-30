@@ -60,8 +60,8 @@ scheduler.start()
 
 @app.on_event("startup")
 def on_startup():
-    create_db_and_tables()
-
+    #create_db_and_tables()
+    pass
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ORIGINS,
