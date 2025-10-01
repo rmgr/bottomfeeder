@@ -82,3 +82,15 @@ class FeedService:
         id = self.feed_repository.create(feed_create, self.db)
         self.db.commit()
         return id
+
+    def delete_feed(self,
+                    feed_id: uuid,
+                    user_id: uuid):
+
+        feed = self.feed_repository.delete(
+            feed_id=feed_id,
+            user_id=user_id,
+            db=self.db,
+        )
+        self.db.commit()
+

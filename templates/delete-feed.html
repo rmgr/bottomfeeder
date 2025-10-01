@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+<p>
+Are you sure you want to delete {{feed.feed_name}}
+<form action="/delete-feed/{{feed.id}}" method="post">
+<button type="submit">Delete {{feed.feed_name}} </button>
+</form>
+</p>
+{% endblock %}
+
+

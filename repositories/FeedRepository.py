@@ -1,5 +1,6 @@
 from typing import Optional, Tuple, List
 from models.Feed import Feed, FeedCreate, FeedUpdate
+from models.Entry import Entry
 from sqlalchemy import desc, and_
 from sqlalchemy.orm import Session
 import uuid
@@ -69,3 +70,24 @@ class FeedRepository:
     def get_existing_feeds(self, feeds: List[str], user_id: uuid.UUID, db: Session) -> List[str]: 
         feeds = db.query(Feed.feed_url).where(and_(Feed.feed_url.in_(feeds), Feed.created_by == user_id)).all()
         return [url for (url,) in feeds]  # Flatten to a list of strings
+
+    def delete(self,
+               feed_id: uuid.UUID,
+               user_id: uuid.UUID,
+               db: Session) -> uuid.UUID:
+        # Ensure feed exists and belongs to the user
+        feed = db.query(Feed).filter(
+            Feed.id == feed_id,
+            Feed.created_by == user_id
+        ).first()
+
+        if not feed:
+            raise HTTPException(status_code=404, detail="Feed not found or not owned by user")
+
+        # Delete related entries
+        db.query(Entry).filter(Entry.feed_id == feed_id).delete()
+
+        db.delete(feed)
+
+        return id
+

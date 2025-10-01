@@ -8,5 +8,6 @@
 	<label>Age Window: <input type="text" name="age_window" value="{{feed.age_window}}"></label><br>
 	<label>Crawl Page Content: <input type="checkbox" name="crawl_page_content" {{ "checked" if feed.crawl_page_content == True }}></label><br>
       <button type="submit">Save</button>
+<a href="/delete-feed/{{feed.id}}">Delete Feed</a>
     </form>
 {% endblock %}

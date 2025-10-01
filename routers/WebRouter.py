@@ -405,3 +405,40 @@ async def unread_entry(
             "entry": entry,
         }
     )
+@WebRouter.get("/delete-feed/{feed_id}", status_code=status.HTTP_201_CREATED)
+def delete_feed_page(
+    feed_id: uuid.UUID,
+    request: Request,
+    current_user: Annotated[AccountSummary, Depends(try_get_current_user)],
+    feed_service: FeedService = Depends(),
+):
+    if not current_user:
+        raise Exception
+    if not current_user:
+        return templates.TemplateResponse(
+            request=request, name="login.html"
+        )
+
+    feed = feed_service.get(feed_id, current_user.id)
+
+    return templates.TemplateResponse(
+        request=request,
+        name="delete-feed.html",
+        context={
+            "feed": feed,
+        }
+    )
+@WebRouter.post("/delete-feed/{feed_id}", status_code=204)
+def delete_feed(
+    feed_id: uuid.UUID,
+    request: Request,
+    current_user: Annotated[AccountSummary, Depends(try_get_current_user)],
+    feed_service: FeedService = Depends(),
+):
+    if not current_user:
+        raise Exception
+    feed_service.delete_feed(
+        feed_id=feed_id,
+        user_id=current_user.id,
+    )
+    return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
