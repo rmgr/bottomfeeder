@@ -44,7 +44,7 @@ class FeedCreate(SQLModel):
     feed_name: str
     feed_url: str
     created_by: uuid.UUID
-    age_window: int = 3 * 24
+    age_window: int = 7 * 24
     crawl_page_content: bool = False
 
 
@@ -53,5 +53,5 @@ class FeedUpdate(SQLModel):
     feed_name: str
     feed_url: str
     created_by: uuid.UUID
-    age_window: int = 3 * 24
+    age_window: int = 7 * 24
     crawl_page_content: bool = False

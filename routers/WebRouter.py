@@ -265,7 +265,7 @@ def update_feed(
     feed_name: str = Form(...),
     feed_url: str = Form(...),
     age_window: int | None = Form(None),
-    crawl_page_content: bool = Form(...),
+    crawl_page_content: Annotated[str | None, Form()] = None,
     feed_service: FeedService = Depends(),
 ):
     if not current_user:
@@ -276,7 +276,7 @@ def update_feed(
         feed_url=feed_url,
         created_by=current_user.id,
         age_window=age_window,
-        crawl_page_content=crawl_page_content,
+        crawl_page_content=crawl_page_content is not None,
     )
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
@@ -287,6 +287,7 @@ def create_feed(
     feed_name: str = Form(...),
     feed_url: str = Form(...),
     age_window: int | None = Form(None),
+    crawl_page_content: Annotated[str | None, Form()] = None,
     feed_service: FeedService = Depends(),
 ):
     if not current_user:
@@ -296,6 +297,7 @@ def create_feed(
         feed_url=feed_url,
         created_by=current_user.id,
         age_window=age_window,
+        crawl_page_content = crawl_page_content is not None
     )
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
