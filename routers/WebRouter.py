@@ -339,7 +339,7 @@ async def entries(
     current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
     entry_service: EntryService = Depends(),
     page: int = Query(1, ge=1),
-    page_size: int = Query(10, ge=1, le=100)
+    page_size: int = Query(25, ge=1, le=100)
 ):
     if not current_user:
         return templates.TemplateResponse(request=request, name="login.html")
@@ -441,4 +441,5 @@ def delete_feed(
         feed_id=feed_id,
         user_id=current_user.id,
     )
+    
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)

@@ -1,25 +1,52 @@
 {% extends "layout.html" %}
 {% block content %}
     <h1>Unread</h1>
-
     {% for entry in entries.items %}
-        <article>
-            <h2><a href="/entry/{{ entry.id }}">{{ entry.title }}</a></h2>
-            <p>{{ entry.publish_date }}</p>
-            <p><a href="/feed/{{entry.feed.id}}">{{ entry.feed.feed_name }}</a></p>
+        <article data-entry-id="{{ entry.id }}">
+            <h2>
+                <a href="/entry/{{ entry.id }}">{{ entry.title }}</a>
+            </h2>
+            <p>
+                <span>
+                    <a class="mark-unread" href="#" style="display:none;">Mark Unread</a>
+                    <a class="mark-read" href="#">Mark Read</a>
+                </span> |
+                {{ entry.publish_date }} |
+                <a href="/feed/{{ entry.feed.id }}">{{ entry.feed.feed_name }}</a>
+            </p>
             <p>{{ entry.summary }}</p>
         </article>
     {% endfor %}
-
     <div class="pagination">
         {% if entries.page > 1 %}
             <a href="?page={{ entries.page - 1 }}&page_size={{ entries.page_size }}">Previous</a>
         {% endif %}
-
         <span>Page {{ entries.page }}</span>
-
         {% if entries.page < entries.total_pages %}
             <a href="?page={{ entries.page + 1 }}&page_size={{ entries.page_size }}">Next</a>
         {% endif %}
     </div>
+    <script>
+    document.querySelectorAll("article[data-entry-id]").forEach((articleEl) => {
+      const entryId = articleEl.dataset.entryId;
+      const readBtn = articleEl.querySelector(".mark-read");
+      const unreadBtn = articleEl.querySelector(".mark-unread");
+
+      readBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        fetch(`/v1/entries/${entryId}/read`)
+          .then((response) => {
+            if (response.ok) articleEl.remove();
+          });
+      });
+
+      unreadBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        fetch(`/v1/entries/${entryId}/unread`)
+          .then((response) => {
+            if (response.ok) articleEl.remove();
+          });
+      });
+    });
+    </script>
 {% endblock %}
