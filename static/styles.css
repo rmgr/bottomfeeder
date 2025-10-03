@@ -60,6 +60,10 @@ a.title {
   color: var(--text-color);
 }
 
+article p{
+	margin-top:0px;
+}
+
 article h2 {
-	line-height: 0.5;
+	margin-bottom:0px;
 }
