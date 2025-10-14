@@ -12,6 +12,8 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from services.RssService import RssService
 from datetime import datetime, timedelta
 import logging
+from starlette.exceptions import HTTPException as StarletteHTTPException
+from exceptions.handlers import custom_http_exception_handler, custom_500_handler 
 
 app = FastAPI()
 scheduler = BackgroundScheduler()
@@ -70,6 +72,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+app.add_exception_handler(StarletteHTTPException, custom_http_exception_handler)
+app.add_exception_handler(Exception, custom_500_handler)  
 app.include_router(WebRouter)
 app.include_router(EntryRouter)
 logging.basicConfig(level=getattr(logging, settings.LOG_LEVEL.upper() , logging.INFO), format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",datefmt="%Y-%m-%d %H:%M:%S")
