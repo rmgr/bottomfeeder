@@ -60,7 +60,7 @@ class EntryRepository:
         query = db.query(Entry)
         total = query.where(Entry.feed_id == feed_id).count()
         feeds = query.order_by(
-            desc(Entry.id)
+            desc(Entry.publish_date)
         ).where(
             and_(
                 Entry.feed_id == feed_id,
