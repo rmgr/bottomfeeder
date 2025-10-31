@@ -1,10 +1,22 @@
 /* Base Colors */
+/* Light mode colors (default) */
 :root {
-  --bg-color: #463239;
-  --text-color: #FAB3A9;
-  --accent-color: #7FB285;
-  --link-color: #C6AD94;
-  --link-hover: #ED6B86;
+  --bg-color: #f4f1de;
+  --text-color: #3d405b;
+  --accent-color: #81b29a;
+  --link-color: #e07a5f;
+  --link-hover: #f2cc8f;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Dark mode colors */
+    --bg-color: #3d405b;
+    --text-color: #f4f1de;
+    --accent-color: #81b29a;
+    --link-color: #e07a5f;
+    --link-hover: #f2cc8f;
+  }
 }
 
 body {
