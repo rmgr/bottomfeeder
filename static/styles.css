@@ -28,7 +28,7 @@ h1 {
 }
 
 h2 {
-  font-size: 2rem;
+  font-size: 1.5rem;
   color: var(--link-color);
 }
 
@@ -60,10 +60,14 @@ a.title {
   color: var(--text-color);
 }
 
+article {
+  border-bottom: 1px solid var(--accent-color);
+}
+
 article p{
 	margin-top:0px;
 }
 
 article h2 {
-	margin-bottom:0px;
+	margin-bottom:0.5rem;
 }
