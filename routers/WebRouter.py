@@ -1,6 +1,7 @@
 from typing import Annotated
 from fastapi import APIRouter, Depends, Request, Query, status, Form, UploadFile, Response, Cookie
 from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.exceptions import RequestValidationError
 from services.FeedService import FeedService
 from services.EntryService import EntryService
 from services.AccountService import AccountService
@@ -42,7 +43,7 @@ async def register_form(
 ):
     try:
         account_service.create_account(account_name, email_address, password)
-    except ValidationError as ex:
+    except RequestValidationError as ex:
         return templates.TemplateResponse(
             request=request,
             name="register.html",

@@ -16,13 +16,50 @@ import uuid
 from dateutil import parser
 import logging
 import time
+import traceback
+from bs4 import BeautifulSoup
 
-def parse_opml_outlines(input):
+def safe_extract_text(html: str):
+    # 1) Try ReadabiliPy (best quality)
+    try:
+        result = simple_json_from_html_string(html, use_readability=True)
+        if isinstance(result, dict):
+            # plain_text is a list of {text: "..."} objects
+            pt = result.get("plain_text")
+            if pt:
+                return "\n".join(t["text"] for t in pt if "text" in t)
+            # fallback to content
+            content = result.get("content")
+            if content:
+                return BeautifulSoup(content, "html.parser").get_text(" ", strip=True)
+    except Exception:
+        logging.exception("ReadabiliPy failed")
+
+    # 2) Fallback: BeautifulSoup from original HTML
+    try:
+        soup = BeautifulSoup(html, "html.parser")
+        text = soup.get_text(" ", strip=True)
+        if text:
+            return text
+    except Exception:
+        logging.exception("BeautifulSoup fallback failed")
+
+    # 3) Last resort: return raw HTML truncated
+    return html[:2000]  # prevent massive blobs
+def parse_opml_outlines(node):
     output = []
-    for outline in input.outlines:
-        output = output + parse_opml_outlines(outline)
-        if outline.type == 'rss':
-            output.append(outline)
+
+    # Recurse into children if present
+    child_outlines = getattr(node, "outlines", None)
+    if child_outlines:
+        for child in child_outlines:
+            output.extend(parse_opml_outlines(child))
+
+    # Detect any feed with xmlUrl (covers RSS, Atom, RDF)
+    xml_url = getattr(node, "xml_url", None) or getattr(node, "xmlUrl", None)
+    if xml_url:
+        output.append(node)
+
     return output
 
 
@@ -161,8 +198,11 @@ class RssService:
 
 
     def refresh_feed(self, feed):
+        headers = {
+            "User-Agent": "bottomfeeder-rss/1.0 (+https://wiki.rmgr.dev)"
+        }
         try:
-            response = requests.get(feed.feed_url, timeout=15)
+            response = requests.get(feed.feed_url, timeout=15, headers=headers)
             response.raise_for_status()
         except Exception as err:
             logging.error(f"error fetching feed: {feed.feed_url}")
@@ -173,31 +213,24 @@ class RssService:
             rss = feedparser.parse(response.content)
 
             if rss.bozo:  # bozo flag is set when parsing error occurs
-                logging.error(f"error parsing feed: {feed.feed_url}")
+                logging.error(f"error parsing feed: {feed.feed_url}. Trying to extract anyway.")
                 logging.error(rss.bozo_exception)
-                return
-
             for entry in rss.entries:
+                
                 # Try to extract description safely
                 description = ""
                 if "summary" in entry:
-                    article = simple_json_from_html_string(
-                        entry.summary, use_readability=True
-                    )
-                    if article.get("plain_text"):
-                        description = "\n".join(t["text"]
-                                                for t in article["plain_text"])
+                    description = safe_extract_text(entry.summary)
+
                 entry_uid = get_entry_uid(entry, entry.get("link"))
                 # Extract page body if requested
                 if feed.crawl_page_content:
                     exists = self.entry_service.exists(entry_uid)
                     if not exists:
-                        response = requests.get(entry.get("link"), timeout=15, headers={ 'User-Agent': 'rmgr rss reader' })
+                        response = requests.get(entry.get("link"), timeout=15, headers=headers)
                         content = response.content.decode(response.encoding or 'utf-8', errors='replace')
-                        summarised = simple_json_from_html_string(content, use_readability=True)
-                        if summarised.get("content"):
-                            raw_html = summarised["content"]
-                            description = raw_html
+                        summarised = safe_extract_text(content)
+                        description = summarised
                 # Extract publication date
                 pub_date = None
                 if hasattr(entry, "published_parsed") and entry.published_parsed:
@@ -218,6 +251,8 @@ class RssService:
                     pub_date,
                 )
         except Exception as err:
+            ## SEEMS TO THROW TO HERE A LOT IN PRODUCITON BUT NOT IN DEV??
             logging.error(f"error parsing feed: {feed.feed_url}")
             logging.error(err)
+            logging.error(traceback.format_exc())
             return
