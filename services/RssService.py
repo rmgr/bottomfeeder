@@ -46,6 +46,7 @@ def safe_extract_text(html: str):
 
     # 3) Last resort: return raw HTML truncated
     return html[:2000]  # prevent massive blobs
+
 def parse_opml_outlines(node):
     output = []
 
@@ -55,7 +56,7 @@ def parse_opml_outlines(node):
         for child in child_outlines:
             output.extend(parse_opml_outlines(child))
 
-    # Detect any feed with xmlUrl (covers RSS, Atom, RDF)
+    # Detect any feed with xmlUrl
     xml_url = getattr(node, "xml_url", None) or getattr(node, "xmlUrl", None)
     if xml_url:
         output.append(node)
@@ -251,7 +252,7 @@ class RssService:
                     pub_date,
                 )
         except Exception as err:
-            ## SEEMS TO THROW TO HERE A LOT IN PRODUCITON BUT NOT IN DEV??
+
             logging.error(f"error parsing feed: {feed.feed_url}")
             logging.error(err)
             logging.error(traceback.format_exc())
