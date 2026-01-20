@@ -22,7 +22,7 @@
             <a href="?page={{ entries.page - 1 }}&page_size={{ entries.page_size }}">Previous</a>
         {% endif %}
         <span>Page {{ entries.page }}</span>
-        {% if entries.page < entries.total_pages %}
+        {% if entries.page + 1 <= entries.total_pages %}
             <a href="?page={{ entries.page + 1 }}&page_size={{ entries.page_size }}">Next</a>
         {% endif %}
     </div>

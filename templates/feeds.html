@@ -14,7 +14,7 @@
         
         <span>Page {{ feeds.page }}</span>
 
-        {% if feeds.page < feeds.total_pages %}
+        {% if feeds.page + 1 < feeds.total_pages %}
             <a href="/feeds?page={{ feeds.page + 1 }}&page_size={{ feeds.page_size }}">Next</a>
         {% endif %}
     </div>
