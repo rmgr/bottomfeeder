@@ -25,11 +25,8 @@ def safe_extract_text(html: str):
         result = simple_json_from_html_string(html, use_readability=True)
         if isinstance(result, dict):
             # plain_text is a list of {text: "..."} objects
-            pt = result.get("plain_text")
-            if pt:
-                return "\n".join(t["text"] for t in pt if "text" in t)
             # fallback to content
-            content = result.get("content")
+            content = result.get("plain_content")
             if content:
                 return BeautifulSoup(content, "html.parser").get_text(" ", strip=True)
     except Exception:
