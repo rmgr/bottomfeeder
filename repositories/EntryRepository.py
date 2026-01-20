@@ -31,25 +31,29 @@ class EntryRepository:
         return (entries, total)
 
 
-    # TODO: filter by user too
     def list_entries(self,
                      user_id: uuid.UUID,
                      only_unread: bool,
                      db: Session,
                      page: int = 1,
                      page_size: int = 10) -> Tuple[List[Entry], int]:
-        query = db.query(Entry).join(Feed, Entry.feed_id == Feed.id)
-        total = query.count()
+        query = db.query(Entry).join(Feed, Entry.feed_id == Feed.id).filter(Feed.created_by == user_id)
         if only_unread:
-            query = query.where(
-                and_(Entry.is_read == False, Feed.created_by == user_id))
-        feeds = query.options(joinedload(Entry.feed)
-                              ).order_by(
+            query = query.filter(Entry.is_read == False)
+
+        total = query.count()
+
+        entries = query.options(
+            joinedload(Entry.feed)
+        ).order_by(
             desc(Entry.publish_date)
         ).offset(
             (page - 1) * page_size
-        ).limit(page_size).all()
-        return (feeds, total)
+        ).limit(
+            page_size
+        ).all()
+
+        return (entries, total)
 
     def list_by_feed(self,
                      user_id: uuid.UUID,
@@ -57,9 +61,9 @@ class EntryRepository:
                      db: Session,
                      page: int = 1,
                      page_size: int = 10) -> Tuple[List[Entry], int]:
-        query = db.query(Entry)
-        total = query.where(Entry.feed_id == feed_id).count()
-        feeds = query.order_by(
+        query = db.query(Entry).filter(Entry.feed_id == feed_id)
+        total = query.count()
+        entries = query.order_by(
             desc(Entry.publish_date)
         ).where(
             and_(
@@ -68,7 +72,7 @@ class EntryRepository:
         ).offset(
             (page - 1) * page_size
         ).limit(page_size).all()
-        return (feeds, total)
+        return (entries, total)
 
     def update(self, entry: Entry, db: Session):
         db.add(entry)

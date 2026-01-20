@@ -20,8 +20,8 @@ class FeedRepository:
                      db: Session,
                      page: int = 1,
                      page_size: int = 10) -> Tuple[List[Feed], int]:
-        query = db.query(Feed)
-        total = query.where(Feed.created_by == user_id).count()
+        query = db.query(Feed).where(feed.created_by == user_id)
+        total = query.count()
         feeds = query.order_by(
             desc(Feed.feed_name)
         ).where(
