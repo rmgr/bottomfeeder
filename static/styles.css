@@ -83,3 +83,10 @@ article p{
 article h2 {
 	margin-bottom:0.5rem;
 }
+
+img {
+  display: block;
+  max-width: 80%;
+  height: auto;
+  margin: 0 auto;
+}
