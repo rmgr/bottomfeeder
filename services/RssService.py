@@ -18,31 +18,27 @@ import logging
 import time
 import traceback
 from bs4 import BeautifulSoup
-
 def safe_extract_text(html: str):
     # 1) Try ReadabiliPy (best quality)
     try:
         result = simple_json_from_html_string(html, use_readability=True)
         if isinstance(result, dict):
-            # plain_text is a list of {text: "..."} objects
-            # fallback to content
             content = result.get("plain_content")
             if content:
-                return BeautifulSoup(content, "html.parser").get_text(" ", strip=True)
+                return content
     except Exception:
         logging.exception("ReadabiliPy failed")
-
-    # 2) Fallback: BeautifulSoup from original HTML
+    # 2) Fallback: BeautifulSoup to strip worst offenders
     try:
         soup = BeautifulSoup(html, "html.parser")
-        text = soup.get_text(" ", strip=True)
-        if text:
-            return text
+        for tag in soup(["script", "style", "nav", "footer", "header"]):
+            tag.decompose()
+        body = soup.find("body")
+        return str(body) if body else str(soup)
     except Exception:
         logging.exception("BeautifulSoup fallback failed")
-
-    # 3) Last resort: return raw HTML truncated
-    return html[:2000]  # prevent massive blobs
+    # 3) Last resort
+    return html[:2000]
 
 def parse_opml_outlines(node):
     output = []
