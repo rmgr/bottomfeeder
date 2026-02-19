@@ -9,6 +9,7 @@
             <h2>
                 <a href="/entry/{{ entry.id }}">{{ entry.title }}</a>
             </h2>
+            <p>{{ entry.description |striptags | truncate(400) }}</p>
             <p>
                 <span>
                     <a class="mark-unread" href="#" style="display:none;">Mark Unread</a>
