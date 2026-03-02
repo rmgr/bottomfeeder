@@ -9,12 +9,12 @@ from services.AccountService import (try_get_current_user)
 from services.RssService import RssService
 from models.Account import AccountSummary
 from models.Pagination import PaginationParams
-from fastapi.templating import Jinja2Templates
+from jinja_extensions import templates
 import uuid
 from datetime import timedelta
 WebRouter = APIRouter(tags=["web"])
 
-templates = Jinja2Templates(directory="templates")
+#templates = Jinja2Templates(directory="templates")
 
 
 @WebRouter.get("/register")
