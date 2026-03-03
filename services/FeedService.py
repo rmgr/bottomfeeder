@@ -57,13 +57,17 @@ class FeedService:
                     feed_url: str,
                     created_by: uuid.UUID,
                     age_window: int,
-                    crawl_page_content: bool) -> uuid.UUID:
+                    crawl_page_content: bool,
+                    link_filter=Optional[str],
+                    page_filter=Optional[str]) -> uuid.UUID:
         feed_update = FeedUpdate(id=feed_id,
                                  feed_name=feed_name,
                                  feed_url=feed_url,
                                  created_by=created_by,
                                  age_window=age_window,
-                                 crawl_page_content=crawl_page_content)
+                                 crawl_page_content=crawl_page_content,
+                                 link_filter=link_filter,
+                                 page_filter=page_filter)
         id = self.feed_repository.update(feed_update, self.db)
         self.db.commit()
         return id
@@ -73,12 +77,16 @@ class FeedService:
                     feed_url: str,
                     created_by: uuid.UUID,
                     age_window: int,
-                    crawl_page_content: bool) -> uuid.UUID:
+                    crawl_page_content: bool,
+                    link_filter=Optional[str],
+                    page_filter=Optional[str]) -> uuid.UUID:
         feed_create = FeedCreate(feed_name=feed_name,
                                  feed_url=feed_url,
                                  created_by=created_by,
                                  age_window=age_window,
-                                 crawl_page_content=crawl_page_content)
+                                 crawl_page_content=crawl_page_content,
+                                 link_filter=link_filter,
+                                 page_filter=page_filter)
         id = self.feed_repository.create(feed_create, self.db)
         self.db.commit()
         return id

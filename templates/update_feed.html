@@ -7,6 +7,8 @@
 	<label>Feed Url: <input type="text" name="feed_url" value="{{feed.feed_url}}"></label><br>
 	<label>Age Window: <input type="text" name="age_window" value="{{feed.age_window}}"></label><br>
 	<label>Crawl Page Content: <input type="checkbox" name="crawl_page_content" {{ "checked" if feed.crawl_page_content == True }}></label><br>
+	<label>Link Filter: <input type="text" name="link_filter" value="{{feed.link_filter or ''}}"></label><br>
+	<label>Page Filter: <input type="text" name="page_filter" value="{{feed.page_filter or ''}}"></label><br>
       <button type="submit">Save</button>
 <a href="/delete-feed/{{feed.id}}">Delete Feed</a>
     </form>

@@ -18,6 +18,8 @@ import logging
 import time
 import traceback
 from bs4 import BeautifulSoup
+import re
+
 def safe_extract_text(html: str):
     # 1) Try ReadabiliPy (best quality)
     try:
@@ -210,12 +212,23 @@ class RssService:
                 logging.error(f"error parsing feed: {feed.feed_url}. Trying to extract anyway.")
                 logging.error(rss.bozo_exception)
             for entry in rss.entries:
-                
+                is_read = False
+                link = entry.get("link")  
+                if not feed.link_filter:
+                    match = re.search(feed.link_filter, link)
+                    if match != None:
+                        logging.warn(f"Link filter match on {link}")
+                        is_read = True
                 # Try to extract description safely
                 description = ""
                 if "summary" in entry:
                     description = safe_extract_text(entry.summary)
 
+                if not feed.page_filter:
+                    match = re.search(feed.page_filter, description)
+                    if match != None:
+                        logging.warn(f"Page filter match on {link}")
+                        is_read = True
                 entry_uid = get_entry_uid(entry, entry.get("link"))
                 # Extract page body if requested
                 if feed.crawl_page_content:
@@ -243,6 +256,7 @@ class RssService:
                     entry.get("link"),
                     description,
                     pub_date,
+                    is_read
                 )
         except Exception as err:
 

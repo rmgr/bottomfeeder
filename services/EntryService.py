@@ -112,7 +112,8 @@ class EntryService:
                      title: str,
                      link: str,
                      description: str,
-                     publish_date: datetime) -> uuid.UUID:
+                     publish_date: datetime,
+                     is_read: bool) -> uuid.UUID:
         try:
             entry_create = EntryCreate(feed_id=feed_id,
                                        id=entry_id,
@@ -120,7 +121,7 @@ class EntryService:
                                        link=link,
                                        description=description,
                                        publish_date=publish_date,
-                                       is_read=False
+                                       is_read=is_read
                                        )
             self.entry_repository.create(entry_create, self.db)
             self.db.commit()

@@ -17,5 +17,7 @@ COPY . /app
 WORKDIR /app
 RUN uv sync --frozen --no-cache
 
-# Run the application.
-CMD [".venv/bin/uvicorn", "main:app", "--proxy-headers", "--forwarded-allow-ips=*", "--port", "8000", "--host", "0.0.0.0"]
+COPY entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+CMD ["/app/entrypoint.sh"]

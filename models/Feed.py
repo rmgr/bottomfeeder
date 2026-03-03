@@ -16,6 +16,8 @@ class FeedBase(SQLModel):
     last_crawl_date: Optional[datetime]
     age_window: int  # seconds
     crawl_page_content: bool
+    link_filter: Optional[str]
+    page_filter: Optional[str]
 
 
 class Feed(FeedBase, table=True):
@@ -32,6 +34,8 @@ class Feed(FeedBase, table=True):
     last_crawl_date: Optional[datetime] = Field(default=None, nullable=True)
     age_window: int = Field(default=3 * 24)
     crawl_page_content: bool = Field(default=False)
+    link_filter: Optional[str] = Field(nullable=True)
+    page_filter: Optional[str] = Field(nullable=True)
 
     entries: List[Entry] = Relationship(back_populates="feed")
 
@@ -46,7 +50,8 @@ class FeedCreate(SQLModel):
     created_by: uuid.UUID
     age_window: int = 7 * 24
     crawl_page_content: bool = False
-
+    link_filter: Optional[str]
+    page_filter: Optional[str]
 
 class FeedUpdate(SQLModel):
     id: uuid.UUID
@@ -55,3 +60,5 @@ class FeedUpdate(SQLModel):
     created_by: uuid.UUID
     age_window: int = 7 * 24
     crawl_page_content: bool = False
+    link_filter: Optional[str]
+    page_filter: Optional[str]
