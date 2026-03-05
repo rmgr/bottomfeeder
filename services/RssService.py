@@ -214,7 +214,7 @@ class RssService:
             for entry in rss.entries:
                 is_read = False
                 link = entry.get("link")  
-                if not feed.link_filter:
+                if feed.link_filter:
                     match = re.search(feed.link_filter, link)
                     if match != None:
                         logging.warn(f"Link filter match on {link}")
@@ -224,7 +224,7 @@ class RssService:
                 if "summary" in entry:
                     description = safe_extract_text(entry.summary)
 
-                if not feed.page_filter:
+                if feed.page_filter:
                     match = re.search(feed.page_filter, description)
                     if match != None:
                         logging.warn(f"Page filter match on {link}")
