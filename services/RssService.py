@@ -94,7 +94,7 @@ def get_entry_uid(entry, feed_url: str) -> str:
         feed_url +
         safe_content(getattr(entry, "title", None)) +
         link +
-        normalise_date(getattr(entry, "pub_date", None))
+        normalise_date(getattr(entry, "published", None) or getattr(entry, "updated", None) or str(datetime.now(timezone.utc)))
     )
     return hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
 
@@ -234,10 +234,14 @@ class RssService:
                 if feed.crawl_page_content:
                     exists = self.entry_service.exists(entry_uid)
                     if not exists:
-                        response = requests.get(entry.get("link"), timeout=15, headers=headers)
-                        content = response.content.decode(response.encoding or 'utf-8', errors='replace')
-                        summarised = safe_extract_text(content)
-                        description = summarised
+                        try:
+                            response = requests.get(entry.get("link"), timeout=15, headers=headers)
+                            content = response.content.decode(response.encoding or 'utf-8', errors='replace')
+                            summarised = safe_extract_text(content)
+                            description = summarised
+                        except Exception as err:
+                            logging.warning(f"Failed to get content at link: {entry.get("link")}")
+                            logging.warning(err)
                 # Extract publication date
                 pub_date = None
                 if hasattr(entry, "published_parsed") and entry.published_parsed:
