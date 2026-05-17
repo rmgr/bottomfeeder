@@ -30,3 +30,8 @@ docker run \
 ## License
 
 [AGPL version 3](LICENSE)
+
+This project includes Trafilatura
+Copyright (c) Trafilatura contributors
+Licensed under the Apache License 2.0
+https://github.com/adbar/trafilatura

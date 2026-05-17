@@ -9,7 +9,6 @@ from repositories.EntryRepository import EntryRepository
 from services.EntryService import EntryService
 from datetime import datetime, timezone, timedelta 
 from email.utils import parsedate_to_datetime
-from readabilipy import simple_json_from_html_string
 import hashlib
 from opyml import OPML
 import uuid
@@ -19,15 +18,18 @@ import time
 import traceback
 from bs4 import BeautifulSoup
 import re
+from trafilatura import extract
 
 def safe_extract_text(html: str):
-    # 1) Try ReadabiliPy (best quality)
+    # 1) Try trafilatura 
     try:
-        result = simple_json_from_html_string(html, use_readability=True)
-        if isinstance(result, dict):
-            content = result.get("plain_content")
-            if content:
-                return content
+        result = extract(html, 
+        output_format="html",
+        include_formatting=True,
+        include_links=True,
+        include_images=False,
+        favor_precision=True)
+        return result
     except Exception:
         logging.exception("ReadabiliPy failed")
     # 2) Fallback: BeautifulSoup to strip worst offenders
