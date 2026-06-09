@@ -14,11 +14,12 @@ from datetime import datetime, timedelta
 import logging
 from starlette.exceptions import HTTPException as StarletteHTTPException
 from exceptions.handlers import custom_http_exception_handler, custom_500_handler 
-
+import os
 app = FastAPI()
 scheduler = BackgroundScheduler()
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
+if os.path.isdir("static"):
+    app.mount("/static", StaticFiles(directory="static"), name="static")
 
 
 def stale():
