@@ -8,7 +8,6 @@ from repositories.FeedRepository import FeedRepository
 from repositories.EntryRepository import EntryRepository
 from services.EntryService import EntryService
 from datetime import datetime, timezone, timedelta 
-from email.utils import parsedate_to_datetime
 import hashlib
 from opyml import OPML
 import uuid
@@ -31,7 +30,7 @@ def safe_extract_text(html: str):
         favor_precision=True)
         return result or ""
     except Exception:
-        logging.exception("ReadabiliPy failed")
+        logging.exception("Trafilatura failed")
     # 2) Fallback: BeautifulSoup to strip worst offenders
     try:
         soup = BeautifulSoup(html, "html.parser")
@@ -65,16 +64,16 @@ def safe_content(tag):
     return (getattr(tag, "content", "") or "").strip()
 
 
-def normalise_date(tag):
-    raw = safe_content(tag)
-    if not raw:
+def normalise_date(raw_str:str):
+    if not raw_str:
         return ""
     try:
-        dt = parsedate_to_datetime(raw)
+        dt = parser.parse(raw_str) 
         # Always use UTC for consistency
-        return dt.astimezone(tz=None).isoformat()
+        return dt.astimezone(tz=timezone.utc).isoformat()
     except Exception:
-        return raw  # fall back to original if parsing fails
+        print(traceback.format_exc())
+        return raw_str # fall back to original if parsing fails
 
 
 def get_entry_uid(entry, feed_url: str) -> str:
@@ -96,7 +95,7 @@ def get_entry_uid(entry, feed_url: str) -> str:
         feed_url +
         safe_content(getattr(entry, "title", None)) +
         link +
-        normalise_date(getattr(entry, "published", None) or getattr(entry, "updated", None) or str(datetime.now(timezone.utc)))
+        normalise_date(entry.get("published") or entry.get("updated") or datetime.now(timezone.utc).isoformat())
     )
     return hashlib.sha256(unique_string.encode("utf-8")).hexdigest()
 
