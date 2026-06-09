@@ -27,9 +27,9 @@ def safe_extract_text(html: str):
         output_format="html",
         include_formatting=True,
         include_links=True,
-        include_images=False,
+        include_images=True,
         favor_precision=True)
-        return result
+        return result or ""
     except Exception:
         logging.exception("ReadabiliPy failed")
     # 2) Fallback: BeautifulSoup to strip worst offenders

@@ -2,7 +2,7 @@ from sqlmodel import Session, SQLModel, create_engine
 from config.settings import settings
 
 # Use DATABASE_URL from environment if available, otherwise use default SQLite URL
-sqlite_file_name = "data.db"
+sqlite_file_name = "../data.db"
 default_sqlite_url = f"sqlite:///{sqlite_file_name}"
 database_url = settings.DATABASE_URL or default_sqlite_url
 

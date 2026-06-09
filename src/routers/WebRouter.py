@@ -359,8 +359,9 @@ async def entries(
     )
 
     return templates.TemplateResponse(
+        request=request,
         name="entries.html",
-        context={"request": request, "entries": entries},
+        context={"entries": entries},
     )
 
 

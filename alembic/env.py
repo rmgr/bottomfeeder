@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 
 # --- Setup project path (must come BEFORE imports) ---
-sys.path.append(str(Path(__file__).resolve().parents[1]))
+sys.path.append(str(Path(__file__).resolve().parents[1] / "src"))
 
 from logging.config import fileConfig
 

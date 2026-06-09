@@ -1,8 +1,7 @@
 from fastapi import Request
 from fastapi.templating import Jinja2Templates
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
-templates = Jinja2Templates(directory="templates")
+from jinja_extensions import templates
 
 async def custom_http_exception_handler(request: Request, exc: StarletteHTTPException):
     if exc.status_code == 404:
@@ -14,8 +13,5 @@ async def custom_http_exception_handler(request: Request, exc: StarletteHTTPExce
     )
 
 async def custom_500_handler(request: Request, exc: Exception):
-    return templates.TemplateResponse(
-        "500.html",
-        {"request": request},
-        status_code=500
-    )
+    return templates.TemplateResponse(request=request, name="500.html", status_code=500)
+
