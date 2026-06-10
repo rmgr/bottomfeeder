@@ -178,7 +178,6 @@ async def add_feed_page(
     current_user: Annotated[AccountSummary | None, Depends(try_get_current_user)],
 ):
     if not current_user:
-        print("no user")
         return templates.TemplateResponse(
             request=request, name="login.html"
         )
@@ -201,7 +200,6 @@ async def update_feed_page(
     feed_service: FeedService = Depends(),
 ):
     if not current_user:
-        print("no user")
         return templates.TemplateResponse(
             request=request, name="login.html"
         )

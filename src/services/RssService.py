@@ -72,7 +72,7 @@ def normalise_date(raw_str:str):
         # Always use UTC for consistency
         return dt.astimezone(tz=timezone.utc).isoformat()
     except Exception:
-        print(traceback.format_exc())
+        logging.info(traceback.format_exc())
         return raw_str # fall back to original if parsing fails
 
 

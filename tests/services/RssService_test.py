@@ -15,6 +15,7 @@ class TestRssService:
         ("2026-06-10T00:00:00+09:30",        "2026-06-09T14:30:00+00:00"),
         ("not-a-date",                       "not-a-date"),
         ("",                                 ""),
+        ("Thurs, 11 Oct 2012",               "Thurs, 11 Oct 2012"),
         (None,                               ""),
     ])
     def test_normalise_date(self, input, expected):
