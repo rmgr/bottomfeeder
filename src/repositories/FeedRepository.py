@@ -23,7 +23,7 @@ class FeedRepository:
         query = db.query(Feed).where(Feed.created_by == user_id)
         total = query.count()
         feeds = query.order_by(
-            desc(Feed.feed_name)
+            desc(Feed.latest_entry_date), desc(Feed.created_date)
         ).where(
             Feed.created_by == user_id
         ).offset(

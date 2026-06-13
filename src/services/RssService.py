@@ -7,6 +7,7 @@ from models.Feed import Feed, FeedCreate
 from repositories.FeedRepository import FeedRepository
 from repositories.EntryRepository import EntryRepository
 from services.EntryService import EntryService
+from services.FeedService import FeedService
 from datetime import datetime, timezone, timedelta 
 import hashlib
 from opyml import OPML
@@ -103,6 +104,7 @@ def get_entry_uid(entry, feed_url: str) -> str:
 class RssService:
     db: Session
     feed_repository: FeedRepository
+    feed_service: FeedService
     entry_repository: EntryRepository
     entry_service: EntryService
 
@@ -110,9 +112,11 @@ class RssService:
                  db: Session = Depends(get_db_connection),
                  feed_repository: FeedRepository = Depends(),
                  entry_repository: EntryRepository = Depends(),
+                 feed_service: FeedService = Depends(),
                  entry_service: EntryService = Depends()):
         self.db = db
         self.feed_repository = feed_repository
+        self.feed_service = feed_service
         self.entry_repository = entry_repository
         self.entry_service = entry_service
 
@@ -195,6 +199,7 @@ class RssService:
 
 
     def refresh_feed(self, feed):
+        added_new_entry = False
         headers = {
             "User-Agent": "bottomfeeder-rss/1.0 (+https://wiki.rmgr.dev)"
         }
@@ -213,56 +218,66 @@ class RssService:
                 logging.error(f"error parsing feed: {feed.feed_url}. Trying to extract anyway.")
                 logging.error(rss.bozo_exception)
             for entry in rss.entries:
-                is_read = False
-                link = entry.get("link")  
-                if feed.link_filter:
-                    match = re.search(feed.link_filter, link)
-                    if match != None:
-                        logging.warn(f"Link filter match on {link}")
-                        is_read = True
-                # Try to extract description safely
-                description = ""
-                if "summary" in entry:
-                    description = safe_extract_text(entry.summary)
+                try:
+                    is_read = False
+                    link = entry.get("link")  
+                    if feed.link_filter:
+                        match = re.search(feed.link_filter, link)
+                        if match != None:
+                            logging.warn(f"Link filter match on {link}")
+                            is_read = True
+                    # Try to extract description safely
+                    description = ""
+                    if "summary" in entry:
+                        description = safe_extract_text(entry.summary)
 
-                if feed.page_filter:
-                    match = re.search(feed.page_filter, description)
-                    if match != None:
-                        logging.warn(f"Page filter match on {link}")
-                        is_read = True
-                entry_uid = get_entry_uid(entry, entry.get("link"))
-                # Extract page body if requested
-                if feed.crawl_page_content:
-                    exists = self.entry_service.exists(entry_uid)
-                    if not exists:
-                        try:
-                            response = requests.get(entry.get("link"), timeout=15, headers=headers)
-                            content = response.content.decode(response.encoding or 'utf-8', errors='replace')
-                            summarised = safe_extract_text(content)
-                            description = summarised
-                        except Exception as err:
-                            logging.warning(f"Failed to get content at link: {entry.get("link")}")
-                            logging.warning(err)
-                # Extract publication date
-                pub_date = None
-                if hasattr(entry, "published_parsed") and entry.published_parsed:
-                    pub_date = parser.parse(entry.published)
-                elif hasattr(entry, "updated_parsed") and entry.updated_parsed:
-                    pub_date = parser.parse(entry.updated)
-                else:
-                    pub_date = datetime.now(timezone.utc)
+                    if feed.page_filter:
+                        match = re.search(feed.page_filter, description)
+                        if match != None:
+                            logging.warn(f"Page filter match on {link}")
+                            is_read = True
+                    entry_uid = get_entry_uid(entry, entry.get("link"))
+                    # Extract page body if requested
+                    if feed.crawl_page_content:
+                        exists = self.entry_service.exists(entry_uid)
+                        if not exists:
+                            try:
+                                response = requests.get(entry.get("link"), timeout=15, headers=headers)
+                                content = response.content.decode(response.encoding or 'utf-8', errors='replace')
+                                summarised = safe_extract_text(content)
+                                description = summarised
+                            except Exception as err:
+                                logging.warning(f"Failed to get content at link: {entry.get("link")}")
+                                logging.warning(err)
+                    # Extract publication date
+                    pub_date = None
+                    if hasattr(entry, "published_parsed") and entry.published_parsed:
+                        pub_date = parser.parse(entry.published)
+                    elif hasattr(entry, "updated_parsed") and entry.updated_parsed:
+                        pub_date = parser.parse(entry.updated)
+                    else:
+                        pub_date = datetime.now(timezone.utc)
 
-                # Use entry.id if present, else fallback to link
+                    # Use entry.id if present, else fallback to link
 
-                entry_id = self.entry_service.create_entry(
-                    feed.id,
-                    entry_uid,
-                    entry.get("title", "No title"),
-                    entry.get("link"),
-                    description,
-                    pub_date,
-                    is_read
-                )
+                    entry_id = self.entry_service.create_entry(
+                        feed.id,
+                        entry_uid,
+                        entry.get("title", "No title"),
+                        entry.get("link"),
+                        description,
+                        pub_date,
+                        is_read
+                    )
+                    if entry_id != None:
+                        added_new_entry = True
+                except Exception as err:
+
+                    logging.error(f"error parsing entry for feed : {feed.feed_url}")
+                    logging.error(err)
+                    logging.error(traceback.format_exc())
+            if added_new_entry:
+                self.feed_service.update_feed(feed.id, feed.feed_name, feed.feed_url, feed.created_by, feed.age_window, feed.crawl_page_content, feed.link_filter, feed.page_filter, datetime.now(timezone.utc))
         except Exception as err:
 
             logging.error(f"error parsing feed: {feed.feed_url}")

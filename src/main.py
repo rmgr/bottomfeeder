@@ -6,6 +6,7 @@ from config.settings import settings
 from repositories.FeedRepository import FeedRepository
 from repositories.EntryRepository import EntryRepository
 from services.EntryService import EntryService
+from services.FeedService import FeedService
 from routers.WebRouter import WebRouter
 from routers.EntryRouter import EntryRouter
 from apscheduler.schedulers.background import BackgroundScheduler
@@ -29,7 +30,8 @@ def stale():
         feed_repository = FeedRepository()
         entry_repository = EntryRepository()
         entry_service = EntryService(db, entry_repository)
-        rss_service = RssService(db, feed_repository, entry_repository, entry_service)
+        feed_service = FeedService(db, feed_repository)
+        rss_service = RssService(db, feed_repository, entry_repository, feed_service, entry_service)
         rss_service.process_age_windows()
     finally:
         try:
@@ -47,8 +49,9 @@ def refresh():
     try:
         feed_repository = FeedRepository()
         entry_repository = EntryRepository()
+        feed_service = FeedService(db, feed_repository)
         entry_service = EntryService(db, entry_repository)
-        rss_service = RssService(db, feed_repository, entry_repository, entry_service)
+        rss_service = RssService(db, feed_repository, entry_repository, feed_service, entry_service)
         rss_service.refresh_feeds()
     finally:
         try:
@@ -58,7 +61,7 @@ def refresh():
             pass
 
 
-scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL, next_run_time=datetime.now() + timedelta(seconds=30))
+scheduler.add_job(refresh, 'interval', minutes=settings.REFRESH_INTERVAL, next_run_time=datetime.now() + timedelta(seconds=1))
 scheduler.start()
 
 

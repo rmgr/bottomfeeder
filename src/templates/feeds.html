@@ -3,8 +3,11 @@
 	<h1>Feeds</h1>
 
     {% for item in feeds.items %}
-        <a href="/feed/{{item.id}}"><h1>{{ item.feed_name }}</h1></a>
+	<article>
+	<p><a href="/feed/{{item.id}}"><h2>{{ item.feed_name }}</h2></a><p>
         <p>{{ item.feed_url }}</p>
+	<p>{{ 'Latest entry: ' + item.latest_entry_date.strftime('%Y-%m-%d %H:%M') if item.latest_entry_date else '' }}</p>
+	</article>
     {% endfor %}
 
     <div class="pagination">

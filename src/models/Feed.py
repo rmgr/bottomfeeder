@@ -18,6 +18,7 @@ class FeedBase(SQLModel):
     crawl_page_content: bool
     link_filter: Optional[str]
     page_filter: Optional[str]
+    latest_entry_date: Optional[datetime]
 
 
 class Feed(FeedBase, table=True):
@@ -62,3 +63,4 @@ class FeedUpdate(SQLModel):
     crawl_page_content: bool = False
     link_filter: Optional[str]
     page_filter: Optional[str]
+    latest_entry_date: Optional[datetime]

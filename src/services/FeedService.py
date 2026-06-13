@@ -3,6 +3,7 @@ from config.db import (get_db_connection)
 from models.Pagination import PaginationParams, PaginatedResponse
 from models.Feed import Feed, FeedCreate, FeedUpdate
 from fastapi import Depends
+from datetime import datetime
 from repositories.FeedRepository import FeedRepository
 from sqlalchemy.orm import Session
 import uuid
@@ -59,7 +60,8 @@ class FeedService:
                     age_window: int,
                     crawl_page_content: bool,
                     link_filter=Optional[str],
-                    page_filter=Optional[str]) -> uuid.UUID:
+                    page_filter=Optional[str],
+                    latest_entry_date=Optional[datetime]) -> uuid.UUID:
         feed_update = FeedUpdate(id=feed_id,
                                  feed_name=feed_name,
                                  feed_url=feed_url,
@@ -67,7 +69,8 @@ class FeedService:
                                  age_window=age_window,
                                  crawl_page_content=crawl_page_content,
                                  link_filter=link_filter,
-                                 page_filter=page_filter)
+                                 page_filter=page_filter,
+                                 latest_entry_date=latest_entry_date)
         id = self.feed_repository.update(feed_update, self.db)
         self.db.commit()
         return id
