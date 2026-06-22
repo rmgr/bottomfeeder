@@ -1,7 +1,7 @@
 from typing import Optional, Tuple, List
 from models.Feed import Feed, FeedCreate, FeedUpdate
 from models.Entry import Entry
-from sqlalchemy import desc, and_
+from sqlalchemy import desc, and_, func
 from sqlalchemy.orm import Session
 import uuid
 
@@ -23,7 +23,8 @@ class FeedRepository:
         query = db.query(Feed).where(Feed.created_by == user_id)
         total = query.count()
         feeds = query.order_by(
-            desc(Feed.latest_entry_date), desc(Feed.created_date)
+            desc(func.coalesce(Feed.latest_entry_date, Feed.created_date)),
+            desc(Feed.id),
         ).where(
             Feed.created_by == user_id
         ).offset(
